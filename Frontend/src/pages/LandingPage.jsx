@@ -4,6 +4,7 @@ const LandingPage = () => {
   return (
     <div>
       <h1>Welcome to Frontend.</h1>
+      <h3>hello</h3>
     </div>
   );
 };
