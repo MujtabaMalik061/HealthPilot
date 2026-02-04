@@ -1,14 +1,9 @@
-import { Navigate, useLocation, useOutletContext } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import Loader from "../components/Loader";
 
-export const ProtectedRoute = ({
-  children,
-  allowWithoutWorkspace = false,
-  requireOwner = false,
-}) => {
+export const ProtectedRoute = ({ children }) => {
   const { authAllow, loading, currentUser } = useAuth();
-  const { workspaceData, workspaceLoading } = useOutletContext() || {};
 
   if (loading)
     return (
@@ -20,22 +15,6 @@ export const ProtectedRoute = ({
     );
 
   if (!authAllow) return <Navigate to="/login" replace />;
-
-  if (
-    (!currentUser?.workSpaces || currentUser.workSpaces.length === 0) &&
-    !allowWithoutWorkspace
-  ) {
-    return <Navigate to="/workspace" replace />;
-  }
-
-  if (
-    !loading &&
-    !workspaceLoading &&
-    requireOwner &&
-    workspaceData?.createdBy !== currentUser?._id
-  ) {
-    return <Navigate to="/workspaces" replace />;
-  }
 
   return children;
 };
@@ -51,7 +30,6 @@ export const PublicRoute = ({ children }) => {
         style={{ height: "85vh", width: "100%" }}
       />
     );
-
 
   if (authAllow) {
     return <Navigate to="/dashboard" replace />;

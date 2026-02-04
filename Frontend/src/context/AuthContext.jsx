@@ -5,7 +5,7 @@ const AuthCtx = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [authAllow, setAuthAllow] = useState(false); 
+  const [authAllow, setAuthAllow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isDetail, setIsDetail] = useState(true);
 
@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       return;
     }
-
     try {
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/user`,
@@ -29,25 +28,13 @@ export const AuthProvider = ({ children }) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await res.json();
-
       if (res.ok) {
-        setCurrentUser(data.user);
-        setAuthAllow(true);
-
-        if (
-          !data.user.firstName ||
-          !data.user.lastName ||
-          !data.user.phoneNumber ||
-          !data.user.gender
-        ) {
-          setIsDetail(false);
-        } else {
-          setIsDetail(true);
-        }
+        setCurrentUser(data);
+          setAuthAllow(true);
       } else {
         logout(false);
       }

@@ -5,6 +5,8 @@ import { ArrowRight, Lock, Mail } from "lucide-react";
 import { IMAGES } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import ResetPasswordModel from "./ResetPasswordModel";
+import { toast } from "sonner";
+import Loader from "../components/Loader";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -13,7 +15,54 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [isForget, setIsForget] = useState(false);
 
-  const handleSignIn = () => {};
+  const validations = () => {
+    if (!email) {
+      toast.error("email is required!");
+      return false;
+    }
+    if (!password) {
+      toast.error("password is required!");
+      return false;
+    }
+    if (password.length < 8) {
+      toast.error("password must be at least 8 characters required!");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSignIn = async () => {
+    const isValid = validations();
+    if (!isValid) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.message || "Invalid credentials");
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setEmail("");
+      setPassword("");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="auth-container">
@@ -65,11 +114,21 @@ const SignIn = () => {
               </span>
             </div>
 
-            <button onClick={handleSignIn} className="auth-btn-primary">
-              Sign in{" "}
-              <span className="icon">
-                <ArrowRight size={16} />
-              </span>
+            <button
+              disabled={loading}
+              onClick={handleSignIn}
+              className="auth-btn-primary"
+            >
+              {loading ? (
+                <Loader color="#fff" size="18" stroke="2" height="17px" />
+              ) : (
+                <>
+                  Sign in{" "}
+                  <span className="icon">
+                    <ArrowRight size={16} />
+                  </span>
+                </>
+              )}
             </button>
 
             <p className="auth-demo">

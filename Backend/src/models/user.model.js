@@ -13,7 +13,11 @@ const userSchema = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     role: { type: String, enum: ["doctor", "patient"], required: true },
-
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
     profilImg: { type: String, default: "" },
     specialist: { type: String },
     location: { type: String },

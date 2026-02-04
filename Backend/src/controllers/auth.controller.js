@@ -1,18 +1,10 @@
 // src/controllers/auth.controller.js
 import User from "../models/user.model.js";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-const generateToken = (user) => {
-  return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-};
+import { generateToken } from "../utils/jwt.js";
 
 export const signUp = async (req, res) => {
   try {
-    console.log("req.body---->", req.body);
-    
     const {
       name,
       email,
@@ -34,7 +26,7 @@ export const signUp = async (req, res) => {
     const userData = {
       name,
       email,
-      password: hashedPassword,
+      password: hashedPassword, // ✅ store hashed password
       role,
     };
 
@@ -76,7 +68,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }

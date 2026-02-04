@@ -134,7 +134,7 @@ const SignUp = () => {
       }
 
       toast.success("Account created! Please login.");
-      navigate("/dashboard");
+      navigate("/signIn");
     } catch (error) {
       console.error("Signup failed:", error);
       toast.error("Signup failed");
