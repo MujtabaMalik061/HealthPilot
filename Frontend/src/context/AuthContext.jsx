@@ -4,12 +4,26 @@ import { useNavigate } from "react-router-dom";
 const AuthCtx = createContext(null);
 
 export const AuthProvider = ({ children }) => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [currentUser, setCurrentUser] = useState(null);
   const [authAllow, setAuthAllow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isDetail, setIsDetail] = useState(true);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
 
   const fetchMe = async () => {
     const token = localStorage.getItem("token");
@@ -34,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       const data = await res.json();
       if (res.ok) {
         setCurrentUser(data);
-          setAuthAllow(true);
+        setAuthAllow(true);
       } else {
         logout(false);
       }
@@ -51,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(null);
     setAuthAllow(false);
     setIsDetail(false);
-    if (redirect) navigate("/login");
+    if (redirect) navigate("/signIn");
   };
 
   useEffect(() => {
@@ -70,6 +84,7 @@ export const AuthProvider = ({ children }) => {
         isDetail,
         setIsDetail,
         logout,
+        isOnline,
       }}
     >
       {children}

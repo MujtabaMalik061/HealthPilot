@@ -7,9 +7,12 @@ import { useNavigate } from "react-router-dom";
 import ResetPasswordModel from "./ResetPasswordModel";
 import { toast } from "sonner";
 import Loader from "../components/Loader";
+import { useAuth } from "../context/AuthContext";
+import { DashboardRoute } from "../utils/Helper";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { refresh, currentUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,7 +59,8 @@ const SignIn = () => {
       localStorage.setItem("user", JSON.stringify(data.user));
       setEmail("");
       setPassword("");
-      navigate("/dashboard");
+      await refresh();
+      DashboardRoute(currentUser?.role, navigate);
     } catch (error) {
       console.error("Login failed:", error);
     } finally {
@@ -132,8 +136,7 @@ const SignIn = () => {
             </button>
 
             <p className="auth-demo">
-              Demo: Use <b>doctor@</b> for Doctor role, <b>admin@</b> for Admin
-              role, or any other email for Patient role.
+              Welcome! Log in with your account or sign up to get started.
             </p>
           </div>
         </div>

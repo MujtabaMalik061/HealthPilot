@@ -23,8 +23,8 @@ const SignUp = () => {
   const [role, setRole] = useState("patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [specialist, setSpecialist] = useState([]);
-  const [specialistInput, setSpecialistInput] = useState("");
+  // const [specialist, setSpecialist] = useState([]);
+  // const [specialistInput, setSpecialistInput] = useState("");
   const [location, setLocation] = useState("");
   const [doctorStartDate, setDoctorStartDate] = useState("");
   const [certificate, setCertificate] = useState(null);
@@ -50,10 +50,10 @@ const SignUp = () => {
       toast.error("Password must be at least 8 characters!");
       return false;
     }
-    if (isDoctor && specialist.length < 1) {
-      toast.error("specialist must be at least 1!");
-      return false;
-    }
+    // if (isDoctor && specialist.length < 1) {
+    //   toast.error("specialist must be at least 1!");
+    //   return false;
+    // }
     if (isDoctor && !location) {
       toast.error("Location is required!");
       return false;
@@ -68,23 +68,23 @@ const SignUp = () => {
       toast.error("certificate is required!");
       return false;
     }
-    if (isDoctor && !educationAndTraining.length < 1) {
+    if (isDoctor && educationAndTraining.length < 1) {
       toast.error("Education And Training must be at least 1!");
       return false;
     }
     return true;
   };
 
-  const handleAddSpecialist = () => {
-    if (specialistInput.trim()) {
-      setSpecialist([...specialist, specialistInput.trim()]);
-      setSpecialistInput("");
-    }
-  };
+  // const handleAddSpecialist = () => {
+  //   if (specialistInput.trim()) {
+  //     setSpecialist([...specialist, specialistInput.trim()]);
+  //     setSpecialistInput("");
+  //   }
+  // };
 
-  const handleRemoveSpecialist = (index) => {
-    setSpecialist(specialist.filter((_, i) => i !== index));
-  };
+  // const handleRemoveSpecialist = (index) => {
+  //   setSpecialist(specialist.filter((_, i) => i !== index));
+  // };
 
   const handleAddEducation = () => {
     if (educationInput.trim()) {
@@ -109,7 +109,7 @@ const SignUp = () => {
       formData.append("role", role);
 
       if (role === "doctor") {
-        formData.append("specialist", JSON.stringify(specialist));
+        // formData.append("specialist", JSON.stringify(specialist));
         formData.append("location", location);
         formData.append("doctorStartDate", doctorStartDate);
         if (certificate) formData.append("certificate", certificate);
@@ -192,7 +192,7 @@ const SignUp = () => {
 
             {role === "doctor" && (
               <>
-                <div className="auth-multi-input">
+                {/* <div className="auth-multi-input">
                   <div className="auth-multi-input-wrapper">
                     <div>
                       <Input
@@ -211,20 +211,22 @@ const SignUp = () => {
                       <Plus size={16} />
                     </button>
                   </div>
-                  <div className="multi-items">
-                    {specialist.map((item, idx) => (
-                      <span key={idx} className="multi-item">
-                        {item}{" "}
-                        <span className="icon">
-                          <X
-                            size={10}
-                            onClick={() => handleRemoveSpecialist(idx)}
-                          />
+                  {specialist?.length > 0 && (
+                    <div className="multi-items">
+                      {specialist.map((item, idx) => (
+                        <span key={idx} className="multi-item">
+                          {item}{" "}
+                          <span className="icon">
+                            <X
+                              size={10}
+                              onClick={() => handleRemoveSpecialist(idx)}
+                            />
+                          </span>
                         </span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                      ))}
+                    </div>
+                  )}
+                </div> */}
 
                 <Input
                   label="Location"
@@ -254,10 +256,6 @@ const SignUp = () => {
                     className="custom-input"
                     onChange={(e) => setCertificate(e.target.files[0])}
                   />
-
-                  {certificate && (
-                    <p className="file-name">{certificate.name}</p>
-                  )}
                 </div>
 
                 <div className="auth-multi-input">
@@ -279,19 +277,21 @@ const SignUp = () => {
                       <Plus size={16} />
                     </button>
                   </div>
-                  <div className="multi-items">
-                    {educationAndTraining.map((item, idx) => (
-                      <span key={idx} className="multi-item">
-                        {item}{" "}
-                        <span className="icon">
-                          <X
-                            size={8}
-                            onClick={() => handleRemoveEducation(idx)}
-                          />
+                  {educationAndTraining?.length > 0 && (
+                    <div className="multi-items">
+                      {educationAndTraining.map((item, idx) => (
+                        <span key={idx} className="multi-item">
+                          {item}{" "}
+                          <span className="icon">
+                            <X
+                              size={8}
+                              onClick={() => handleRemoveEducation(idx)}
+                            />
+                          </span>
                         </span>
-                      </span>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}

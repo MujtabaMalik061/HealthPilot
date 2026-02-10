@@ -226,3 +226,69 @@
   font-size: 1rem;
   color: var(--muted-foreground);
 }
+
+
+/* ========== Logout Style ========== */
+.logout-model {
+  width: 500px;
+  text-align: center;
+  padding: 20px;
+}
+
+.logout-icon {
+  color: var(--status-rejected);
+  margin-bottom: 20px;
+}
+
+.logout-title {
+  font-size: 32px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--primary);
+}
+
+.logout-text {
+  color: var(--muted-foreground);
+  margin-bottom: 36px;
+}
+
+.logout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.logout-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  padding: 16px 28px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-action-btn:hover {
+  gap: 14px;
+}
+
+.logout-action-primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0px 16px rgba(0, 0, 0, 0.143);
+}
+
+.logout-action-secondary {
+  background: var(--status-rejected);
+  color: #ffffff;
+  box-shadow: 0 0px 18px rgba(255, 1, 1, 0.233);
+}
+
+.btn-icon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}

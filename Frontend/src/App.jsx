@@ -15,6 +15,12 @@ import SignUp from "./auth/SignUp.jsx";
 import AppLayout from "./layout/AppLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import { ProtectedRoute, PublicRoute } from "./routes/RouteGuards.jsx";
+import NotFound from "./components/NotFound.jsx";
+import AdminDoctors from "./pages/AdminDoctors.jsx";
+import AdminUsers from "./pages/AdminUsers.jsx";
+import AdminAppointments from "./pages/AdminAppointments.jsx";
+import AdminServices from "./pages/AdminServices.jsx";
+import AdminReports from "./pages/AdminReports.jsx";
 
 const App = () => {
   return (
@@ -38,10 +44,126 @@ const App = () => {
         />
 
         <Route element={<AppLayout />}>
+          {/* ===== Admin ===== */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/doctors"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminDoctors />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/appointments"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminAppointments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/services"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminServices />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminReports />
+              </ProtectedRoute>
+            }
+          />
+          {/* ===== Doctor ===== */}
+          <Route
+            path="/doctor/dashboard"
+            element={
+              <ProtectedRoute role={["doctor"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/appointments"
+            element={
+              <ProtectedRoute role={["doctor"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/info"
+            element={
+              <ProtectedRoute role={["doctor"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* ===== User ===== */}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute role={["patient"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctors"
+            element={
+              <ProtectedRoute role={["patient"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/services"
+            element={
+              <ProtectedRoute role={["patient"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/appointments"
+            element={
+              <ProtectedRoute role={["patient"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* ===== All ===== */}
+          <Route
+            path="/reports"
+            element={
+              <ProtectedRoute role={["doctor", "patient"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute role={["admin", "doctor", "patient"]}>
                 <Dashboard />
               </ProtectedRoute>
             }
@@ -58,6 +180,7 @@ const App = () => {
           <Route path="/terms" element={<LandingTerms />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/404" element={<NotFound />} />
       </Routes>
     </>
   );

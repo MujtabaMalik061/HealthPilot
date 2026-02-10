@@ -1,10 +1,10 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Loader from "../components/Loader";
+import { useEffect } from "react";
 
-export const ProtectedRoute = ({ children }) => {
-  const { authAllow, loading, currentUser } = useAuth();
-
+export const ProtectedRoute = ({ children, role = [] }) => {
+  const { authAllow, currentUser, loading } = useAuth();
   if (loading)
     return (
       <Loader
@@ -14,15 +14,28 @@ export const ProtectedRoute = ({ children }) => {
       />
     );
 
-  if (!authAllow) return <Navigate to="/login" replace />;
+  if (!authAllow) return <Navigate to="/signIn" replace />;
+
+  if (role.length && !role.includes(currentUser.role)) {
+    return <Navigate to="/404" replace />;
+  }
 
   return children;
 };
 
 export const PublicRoute = ({ children }) => {
-  const { authAllow, loading } = useAuth();
+  const { authAllow, currentUser, loading } = useAuth();
+  const navigate = useNavigate();
 
-  if (loading)
+  useEffect(() => {
+    if (authAllow && currentUser?.role) {
+      if (currentUser.role === "admin") navigate("/admin/dashboard");
+      else if (currentUser.role === "doctor") navigate("/doctor/dashboard");
+      else navigate("/dashboard");
+    }
+  }, [authAllow, currentUser, navigate]);
+
+  if (loading) {
     return (
       <Loader
         loading={true}
@@ -30,10 +43,9 @@ export const PublicRoute = ({ children }) => {
         style={{ height: "85vh", width: "100%" }}
       />
     );
-
-  if (authAllow) {
-    return <Navigate to="/dashboard" replace />;
   }
+
+  if (authAllow) return null;
 
   return children;
 };

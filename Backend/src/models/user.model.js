@@ -19,7 +19,7 @@ const userSchema = new Schema(
       select: false,
     },
     profilImg: { type: String, default: "" },
-    specialist: { type: String },
+    specialist: [{ type: String }],
     location: { type: String },
     description: { type: String },
     rating: { type: Number, default: 0 },

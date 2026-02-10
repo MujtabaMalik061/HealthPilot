@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import { Header } from "../components/CustomComponents";
 
 const Dashboard = () => {
   return (
-    <div>
-      <h3>Dashboard</h3>
+    <div className="page-container">
+      <Header
+        title="Admin Dashboard"
+        desc="System overview and analytics"
+      />
     </div>
   );
-}
+};
 
-export default Dashboard
+export default Dashboard;

@@ -10,7 +10,7 @@ export const signUp = async (req, res) => {
       email,
       password,
       role,
-      specialist,
+      // specialist,
       location,
       doctorStartDate,
       educationAndTraining,
@@ -26,12 +26,12 @@ export const signUp = async (req, res) => {
     const userData = {
       name,
       email,
-      password: hashedPassword, // ✅ store hashed password
+      password: hashedPassword, 
       role,
     };
 
     if (role === "doctor") {
-      userData.specialist = specialist ? JSON.parse(specialist) : [];
+      // userData.specialist = specialist ? JSON.parse(specialist) : [];
       userData.location = location;
       userData.doctorStartDate = doctorStartDate;
       userData.educationAndTraining = educationAndTraining
@@ -114,9 +114,9 @@ export const getUserData = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const updates = { ...req.body };
-    if (updates.specialist) {
-      updates.specialist = JSON.parse(updates.specialist);
-    }
+    // if (updates.specialist) {
+    //   updates.specialist = JSON.parse(updates.specialist);
+    // }
     if (updates.educationAndTraining) {
       updates.educationAndTraining = JSON.parse(updates.educationAndTraining);
     }

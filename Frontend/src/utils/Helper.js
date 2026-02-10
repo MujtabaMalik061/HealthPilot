@@ -19,3 +19,13 @@ export const getInitialsByName = (name) => {
     .map((word) => word[0].toUpperCase())
     .join("");
 };
+
+export const DashboardRoute = (role, navigate) => {
+  if (role === "admin") {
+    navigate("/admin/dashboard");
+  } else if (role === "doctor") {
+    navigate("/doctor/dashboard");
+  } else {
+    navigate("/dashboard");
+  }
+};

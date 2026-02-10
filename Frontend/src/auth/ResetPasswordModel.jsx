@@ -9,9 +9,9 @@ const ResetPasswordModel = ({ onClose }) => {
 
   return (
     <div className="model-overlay">
-      <div className="model-content">
+      <div style={{ width: "500px" }} className="model-content">
         <div className="model-header">
-          <h3 className="model-header-title">Add Service</h3>
+          <h3 className="model-header-title">Reset Password</h3>
           <button onClick={onClose} className="model-header-close-btn">
             ×
           </button>
