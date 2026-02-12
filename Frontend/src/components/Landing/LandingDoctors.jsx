@@ -25,7 +25,7 @@ const LandingDoctorsSections = () => {
                 key={index}
                 profileImage={doctor?.profilImg}
                 name={doctor?.name || "N/A"}
-                specialty={doctor?.specialist || "N/A"}
+                specialty={doctor?.specialist?.[0] || "N/A"}
                 rating={doctor?.rating || 0}
                 reviews={doctor?.reviews || 0}
                 experience={getDoctorExperince(doctor?.doctorStartDate) || "N/A"}

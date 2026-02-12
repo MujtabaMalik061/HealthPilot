@@ -134,3 +134,31 @@ export const LandingDoctors = [
     ],
   },
 ];
+
+const wantDoctorPending = {
+  rating: 4.9,
+  reviews: 127,
+  doctorStartDate: "2012",
+  treatments: 856,
+  booked: [],
+};
+
+const wantDoctorInfo = {
+  specialist: ["Cardiologist", "General Medicine"],
+  location: "New York Medical Center",
+  description:
+    "Dr. Sarah Johnson is a board-certified cardiologist with over 12 years of experience in treating heart conditions.",
+  price: 150,
+  timeCycle: "30min",
+  availabe: true,
+  educationAndTraining: [
+    "MD - Harvard Medical School",
+    "Residency - Johns Hopkins Hospital",
+    "Fellowship - Mayo Clinic",
+  ],
+  availableDays: [
+    { day: "Monday", start: "9:00 AM", end: "5:00 PM" },
+    { day: "Wednesday", start: "9:00 AM", end: "5:00 PM" },
+    { day: "Friday", start: "10:00 AM", end: "4:00 PM" },
+  ],
+};

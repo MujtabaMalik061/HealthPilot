@@ -1,9 +1,11 @@
 import SiteLogo from "../assets/images/SiteLogo.png";
 import PlaceHolder from "../assets/images/PlaceHolder.webp";
+import NotFound from "../assets/images/NotFound.png";
 
 export const IMAGES = {
   SiteLogo,
   PlaceHolder,
+  NotFound,
 };
 
 export const SidebarAdminMenuItems = [
@@ -18,12 +20,14 @@ export const SidebarAdminMenuItems = [
     icon: "Stethoscope",
     route: "/admin/doctors",
     activeAt: "/admin/doctors",
+    startsWith: ["/admin/doctor-details/"],
   },
   {
     name: "Users",
     icon: "Users",
     route: "/admin/users",
     activeAt: "/admin/users",
+    startsWith: ["/admin/user-details/"],
   },
   {
     name: "All Appointments",
@@ -36,6 +40,7 @@ export const SidebarAdminMenuItems = [
     icon: "Building2",
     route: "/admin/services",
     activeAt: "/admin/services",
+    startsWith: ["/admin/service-details/"],
   },
   {
     name: "Reports",

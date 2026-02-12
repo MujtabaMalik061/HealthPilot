@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const AuthCtx = createContext(null);
 
@@ -47,8 +48,17 @@ export const AuthProvider = ({ children }) => {
 
       const data = await res.json();
       if (res.ok) {
-        setCurrentUser(data);
-        setAuthAllow(true);
+        if (data.status === "approved") {
+          setCurrentUser(data);
+          setAuthAllow(true);
+        } else {
+          logout(false);
+          toast.error(
+            data.status === "pending"
+              ? "Your account is pending approval"
+              : "Your account has been banned",
+          );
+        }
       } else {
         logout(false);
       }

@@ -1,15 +1,220 @@
-import React from 'react'
-import { Header } from '../components/CustomComponents'
+import React, { useEffect, useState } from "react";
+import {
+  Header,
+  SearchInput,
+  Tab,
+} from "../components/CustomComponents";
+import CustomTable from "../components/CustomTable";
+import {
+  getReportsHelper,
+  updateReportHelper,
+  deleteReportHelper,
+} from "../services/ReportsHelper";
+import Loader from "../components/Loader";
+import { toast } from "sonner";
+import { timeAgo } from "../utils/Helper";
+import ReportDetailModel from "../components/ReportDetailModel";
 
 const AdminReports = () => {
+  // State
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("pending");
+  const [statusLoading, setStatusLoading] = useState(null);
+  const [reportDetails, setReportDetails] = useState(null);
+
+  // Fetch reports
+  const fetchReports = async (nextPage = 1) => {
+    try {
+      if (!loading) setLoading(true);
+
+      const res = await getReportsHelper(nextPage, limit, search, status);
+
+      setReports(res.data || []);
+      setTotal(res.meta?.total || 0);
+      setLastPage(res.meta?.totalPages || 1);
+    } catch (err) {
+      console.error("Failed to fetch reports:", err);
+      toast.error(err?.message || "Failed to fetch reports");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports(page);
+  }, [page, status, search]);
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
+  const handleStatusChange = async (reportId, newStatus) => {
+    try {
+      setStatusLoading(reportId);
+      await updateReportHelper(reportId, { status: newStatus });
+      toast.success("Report status updated successfully");
+      fetchReports(page);
+    } catch (err) {
+      console.error("Failed to update report status:", err);
+      toast.error("Failed to update report status");
+    } finally {
+      setStatusLoading(null);
+    }
+  };
+
+  const handleDelete = async (reportId) => {
+    try {
+      setStatusLoading(reportId);
+      await deleteReportHelper(reportId);
+      toast.success("Report deleted successfully");
+      fetchReports(page);
+    } catch (err) {
+      console.error("Failed to delete report:", err);
+      toast.error("Failed to delete report");
+    } finally {
+      setStatusLoading(null);
+    }
+  };
+
+  const reportsColumns = [
+    {
+      name: "Sender",
+      row: (r) => r.sender?.name || "N/A",
+    },
+    {
+      name: "Receiver(s)",
+      row: (r) =>
+        r.receiver?.length > 0
+          ? r.receiver.map((rec) => rec.name).join(", ")
+          : "N/A",
+    },
+    {
+      name: "Type",
+      row: (r) => r.reportType || "N/A",
+    },
+    {
+      name: "Status",
+      row: (r) => (
+        <span
+          className={`custom-status custom-status-${r.status || "pending"}`}
+        >
+          {r.status || "pending"}
+        </span>
+      ),
+    },
+    {
+      name: "Created At",
+      row: (r) => timeAgo(r.createdAt) || "N/A",
+    },
+    // {
+    //   name: "Actions",
+    //   bothClass: "custom-table-action",
+    //   row: (r) =>
+    //     statusLoading === r._id ? (
+    //       <Loader size={12} />
+    //     ) : (
+    //       <EllipsisSelector
+    //         options={[
+    //           {
+    //             label: "View Details",
+    //             icon: Eye,
+    //             action: () => alert(JSON.stringify(r, null, 2)),
+    //           },
+    //           {
+    //             label: "Resolve",
+    //             icon: CircleCheckBig,
+    //             action: () => handleStatusChange(r._id, "resolved"),
+    //           },
+    //           {
+    //             label: "Reject",
+    //             icon: CircleX,
+    //             action: () => handleStatusChange(r._id, "rejected"),
+    //           },
+    //           {
+    //             label: "Delete",
+    //             icon: CircleX,
+    //             action: () => handleDelete(r._id),
+    //           },
+    //         ]}
+    //       />
+    //     ),
+    // },
+    {
+      name: "Actions",
+      bothClass: "custom-table-action",
+      row: (r) => (
+        <div className="custom-table-action-container">
+          <button
+            className="custom-table-action-btn inactive"
+            onClick={() => handleDelete(r._id)}
+          >
+            Delete
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="page-container">
       <Header
         title="All Reports"
-        desc="Browse all Reports of users and doctors and take actions."
+        desc="Browse all reports of users and doctors and take actions."
       />
+
+      <div className="custom-multi-filter">
+        <SearchInput
+          value={search}
+          setValue={setSearch}
+          placeholder="Search reports..."
+          margin="8px 0px"
+        />
+      </div>
+      <Tab
+        activeTab={status}
+        setActiveTab={setStatus}
+        tabs={[
+          { label: "Pending reports", filter: "pending" },
+          { label: "Resolved requests", filter: "resolved" },
+          { label: "Rejected requests", filter: "rejected" },
+        ]}
+      />
+      <div className="custom-table-card">
+        <h3 className="custom-section-title">Pending reports</h3>
+        <CustomTable
+          data={reports}
+          columns={reportsColumns}
+          show={`${
+            reports?.length > 0
+              ? `Showing ${(page - 1) * limit + 1}–${Math.min(
+                  page * limit,
+                  total,
+                )} of ${total} reports`
+              : `Showing 0–0 of 0 reports`
+          }`}
+          page={page}
+          lastPage={lastPage}
+          handlePageChange={handlePageChange}
+          loading={loading}
+          loadingHeight="500px"
+          rowClickable={true}
+          onRowClick={(rowData) => setReportDetails(rowData)}
+        />
+      </div>
+      {reportDetails && (
+        <ReportDetailModel
+          data={reportDetails}
+          onClose={() => setReportDetails(null)}
+        />
+      )}
     </div>
   );
-}
+};
 
-export default AdminReports
+export default AdminReports;

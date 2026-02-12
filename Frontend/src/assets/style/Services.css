@@ -14,7 +14,7 @@
 
 .add-services-model-open-btn:hover {
   transform: scale(1.02);
-  background: var(--status-accepted);
+  background: var(--status-approved);
 }
 
 .add-services-action-container {
@@ -94,7 +94,7 @@
 
 .services-grid {
   max-width: 1400px;
-  margin: 50px auto 0;
+  margin: 30px auto 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;

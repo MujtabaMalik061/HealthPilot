@@ -147,7 +147,7 @@
 
 .sidebar-logout-btn:hover {
   gap: 12px;
-  background-color: var(--status-accepted);
+  background-color: var(--status-approved);
 }
 
 @media (max-width: 768px) {

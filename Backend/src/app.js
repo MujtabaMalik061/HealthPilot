@@ -6,6 +6,9 @@ import cors from "cors";
 import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import servicesRoute from "./routes/service.routes.js";
+import usersRoute from "./routes/users.routes.js";
+import reportsRoute from "./routes/reports.routes.js";
+import appointmentsRoute from "./routes/appointments.routes.js";
 
 import connectToDB from "./database/mongodb.js";
 
@@ -21,6 +24,9 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/services", servicesRoute);
+app.use("/api/users", usersRoute);
+app.use("/api/reports", reportsRoute);
+app.use("/api/appointments", appointmentsRoute);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Server API");

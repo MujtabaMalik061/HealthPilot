@@ -21,6 +21,15 @@ import AdminUsers from "./pages/AdminUsers.jsx";
 import AdminAppointments from "./pages/AdminAppointments.jsx";
 import AdminServices from "./pages/AdminServices.jsx";
 import AdminReports from "./pages/AdminReports.jsx";
+import DoctorInfo from "./pages/Doctor/DoctorInfo.jsx";
+import Setting from "./pages/Setting.jsx";
+import AdminDoctorDetails from "./components/Admin_DetailsPages/DoctorDetails.jsx";
+import AdminUserDetails from "./components/Admin_DetailsPages/UserDetails.jsx";
+import AdminServiceDetails from "./components/Admin_DetailsPages/ServiceDetails.jsx";
+import DoctorDetails from "./components/DetailsPages/DoctorDetails.jsx";
+import UserDetails from "./components/DetailsPages/UserDetails.jsx";
+import ServiceDetails from "./components/DetailsPages/ServiceDetails.jsx";
+import AppointmentBooking from "./pages/Paitent/AppointmentBooking.jsx";
 
 const App = () => {
   return (
@@ -62,10 +71,26 @@ const App = () => {
             }
           />
           <Route
+            path="/admin/doctor-details/:doctorId"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminDoctorDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/users"
             element={
               <ProtectedRoute role={["admin"]}>
                 <AdminUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/user-details/:userId"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminUserDetails />
               </ProtectedRoute>
             }
           />
@@ -82,6 +107,14 @@ const App = () => {
             element={
               <ProtectedRoute role={["admin"]}>
                 <AdminServices />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/service-details/:serviceId"
+            element={
+              <ProtectedRoute role={["admin"]}>
+                <AdminServiceDetails />
               </ProtectedRoute>
             }
           />
@@ -114,7 +147,7 @@ const App = () => {
             path="/doctor/info"
             element={
               <ProtectedRoute role={["doctor"]}>
-                <Dashboard />
+                <DoctorInfo />
               </ProtectedRoute>
             }
           />
@@ -132,6 +165,14 @@ const App = () => {
             element={
               <ProtectedRoute role={["patient"]}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/appoint-booking/:userId"
+            element={
+              <ProtectedRoute role={["patient"]}>
+                <AppointmentBooking />
               </ProtectedRoute>
             }
           />
@@ -161,10 +202,34 @@ const App = () => {
             }
           />
           <Route
+            path="/doctor-details/:doctorId"
+            element={
+              <ProtectedRoute role={["doctor", "patient"]}>
+                <DoctorDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user-details/:userId"
+            element={
+              <ProtectedRoute role={["doctor", "patient"]}>
+                <UserDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/service-details/:serviceId"
+            element={
+              <ProtectedRoute role={["doctor", "patient"]}>
+                <ServiceDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/settings"
             element={
               <ProtectedRoute role={["admin", "doctor", "patient"]}>
-                <Dashboard />
+                <Setting />
               </ProtectedRoute>
             }
           />

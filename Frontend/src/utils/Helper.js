@@ -1,8 +1,18 @@
-export const getDoctorExperince = (year) => {
-  if (!year) return 0;
+import API from "./api"
+
+export const getDoctorExperince = (value) => {
+  if (!value) return 0;
 
   const currentYear = new Date().getFullYear();
-  const startYear = Number(year);
+
+  let startYear;
+  if (typeof value === "string" || value instanceof Date) {
+    const date = new Date(value);
+    if (isNaN(date.getTime())) return 0;
+    startYear = date.getFullYear();
+  } else {
+    startYear = Number(value);
+  }
 
   if (isNaN(startYear) || startYear > currentYear) return 0;
 
@@ -20,6 +30,58 @@ export const getInitialsByName = (name) => {
     .join("");
 };
 
+export const timeAgo = (dateString) => {
+  if (!dateString) return "";
+
+  const now = new Date();
+  const past = new Date(dateString);
+  const diff = Math.floor((now - past) / 1000);
+
+  if (diff < 60) return `${diff}s ago`;
+
+  const minutes = Math.floor(diff / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+
+  const weeks = Math.floor(days / 7);
+  if (weeks < 4) return `${weeks}w ago`;
+
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+
+  const years = Math.floor(days / 365);
+  return `${years}y ago`;
+};
+
+export const formateTimeInM = (time) => {
+  if (!time) return "N/A";
+
+  const [hoursStr, minutes] = time.split(":");
+  let hours = parseInt(hoursStr, 10);
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+
+  return `${hours.toString().padStart(2, "0")}:${minutes} ${ampm}`;
+};
+
+export const formateDate = (date) => {
+  if (!date) return "-";
+
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
 export const DashboardRoute = (role, navigate) => {
   if (role === "admin") {
     navigate("/admin/dashboard");
@@ -29,3 +91,48 @@ export const DashboardRoute = (role, navigate) => {
     navigate("/dashboard");
   }
 };
+
+export const handleUploadImage = async (avatarFile) => {
+  try {
+    let avatarUrl = "";
+    if (avatarFile) {
+      const formData = new FormData();
+      formData.append("image", avatarFile);
+      const res = await fetch(
+        `${import.meta.env.VITE_IMAGE_BACKEND}/addImage`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to upload avatar");
+
+      avatarUrl = data.url;
+    }
+    return avatarUrl;
+  } catch (err) {
+    console.error("Failed to Upload Image:", err);
+  }
+};
+
+export const getAdminId = async () => {
+  try {
+    const res = await API.get("/api/auth/getAdminId");
+    return res.data;
+  } catch (err) {
+    throw err.response?.data;
+  }
+};
+
+export const getUserById = async (id) => {
+  try {
+    const res = await API.get(`/api/auth/getUserDetailsById/${id}`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data;
+  }
+};
+

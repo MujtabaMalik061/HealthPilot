@@ -90,9 +90,7 @@ const AdminServices = () => {
       </div>
       <SearchInput
         value={search}
-        setValue={(value) => {
-          setSearch(value);
-        }}
+        setValue={setSearch}
         placeholder="Search services..."
         margin="20px 0"
       />

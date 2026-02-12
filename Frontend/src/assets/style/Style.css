@@ -24,8 +24,8 @@
   --muted-foreground: #73738c;
   --border: #e6e6eb;
   --radius: 0.75rem;
-  --status-pending: #b4f178;
-  --status-accepted: #2fc49f;
+  --status-pending: #c1c611;
+  --status-approved: #2fc49f;
   --status-rejected: #e63c3c;
   --status-rejected-hover: #e63c3c21;
 }
@@ -46,7 +46,7 @@
   --border: #383846;
   --radius: 0.75rem;
   --status-pending: #b6f27f;
-  --status-accepted: #33c0a0;
+  --status-approved: #33c0a0;
   --status-rejected: #e64d4d;
   --status-rejected-hover: #e63c3c21;
 }
@@ -55,6 +55,12 @@ body {
   font-family: "Inter", sans-serif;
   background-color: var(--background);
   color: var(--foreground);
+}
+
+.elepsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loaderWrapper {
@@ -146,6 +152,12 @@ body {
 .model-content-container {
   padding: 15px;
   background-color: var(--card);
+}
+
+@media (max-width: 768px) {
+  .main-content{
+    margin-left: 0px;
+  }
 }
 
 /* ------  toast ------ */

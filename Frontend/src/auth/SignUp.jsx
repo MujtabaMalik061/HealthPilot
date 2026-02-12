@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../assets/style/Auth.css";
-import { Input } from "../components/CustomComponents";
+import { DateInput, Input } from "../components/CustomComponents";
 import {
   ArrowRight,
   CalendarRange,
@@ -16,6 +16,7 @@ import { IMAGES } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 import { toast } from "sonner";
+import { handleUploadImage } from "../utils/Helper";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -112,13 +113,15 @@ const SignUp = () => {
         // formData.append("specialist", JSON.stringify(specialist));
         formData.append("location", location);
         formData.append("doctorStartDate", doctorStartDate);
-        if (certificate) formData.append("certificate", certificate);
+        if (certificate) {
+          const res = await handleUploadImage(certificate);
+          formData.append("certificate", res);
+        }
         formData.append(
           "educationAndTraining",
           JSON.stringify(educationAndTraining),
         );
       }
-
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
         {
@@ -227,7 +230,6 @@ const SignUp = () => {
                     </div>
                   )}
                 </div> */}
-
                 <Input
                   label="Location"
                   value={location}
@@ -236,28 +238,24 @@ const SignUp = () => {
                   type="inputIcon"
                   Icon={MapPin}
                 />
-
-                <Input
+                <DateInput
                   label="Doctor Start Date"
                   value={doctorStartDate}
                   setValue={setDoctorStartDate}
-                  placeholder="Select year"
-                  type="inputIcon"
+                  placeholder="Select date"
                   Icon={CalendarRange}
-                  InputType="date"
-                  min="1900"
-                  max={new Date().getFullYear()}
+                  min="1900-01-01"
+                  max={new Date().toISOString().split("T")[0]}
                 />
-
                 <div className="custom-file-input">
                   <label className="custom-input-label">Certificate</label>
                   <input
                     type="file"
                     className="custom-input"
+                    accept="image/*"
                     onChange={(e) => setCertificate(e.target.files[0])}
                   />
                 </div>
-
                 <div className="auth-multi-input">
                   <div className="auth-multi-input-wrapper">
                     <div>

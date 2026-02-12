@@ -30,7 +30,7 @@
 .offline-and-retry-btn {
   padding: 12px 30px;
   font-size: 16px;
-  background: var(--status-accepted);
+  background: var(--status-approved);
   color: white;
   border: none;
   border-radius: 8px;

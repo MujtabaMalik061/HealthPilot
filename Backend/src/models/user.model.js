@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const { Schema, model } = mongoose;
 const availableDaySchema = new Schema({
-  day: { type: String }, 
+  day: { type: String },
   start: { type: String },
   end: { type: String },
 });
@@ -12,7 +12,11 @@ const userSchema = new Schema(
   {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    role: { type: String, enum: ["doctor", "patient"], required: true },
+    role: {
+      type: String,
+      enum: ["doctor", "patient", "admin"],
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -35,9 +39,9 @@ const userSchema = new Schema(
     booked: [{ type: Schema.Types.Mixed }],
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected"],
+      enum: ["pending", "approved", "rejected"],
       default: function () {
-        return this.role === "doctor" ? "pending" : "accepted";
+        return this.role === "doctor" ? "pending" : "approved";
       },
     },
   },
