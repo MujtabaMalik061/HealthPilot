@@ -109,7 +109,8 @@ const AdminServices = () => {
                 title={service.title}
                 description={service.description}
                 doctors={service.doctors.length || 0}
-                viewDoctor={service?.doctors?.length > 0 ? true : false}
+                viewDetails={true}
+                serviceId={service?._id}
                 longPress={true}
                 longPressOptions={[
                   {

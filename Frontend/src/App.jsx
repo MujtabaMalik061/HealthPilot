@@ -25,11 +25,14 @@ import DoctorInfo from "./pages/Doctor/DoctorInfo.jsx";
 import Setting from "./pages/Setting.jsx";
 import AdminDoctorDetails from "./components/Admin_DetailsPages/DoctorDetails.jsx";
 import AdminUserDetails from "./components/Admin_DetailsPages/UserDetails.jsx";
-import AdminServiceDetails from "./components/Admin_DetailsPages/ServiceDetails.jsx";
 import DoctorDetails from "./components/DetailsPages/DoctorDetails.jsx";
 import UserDetails from "./components/DetailsPages/UserDetails.jsx";
 import ServiceDetails from "./components/DetailsPages/ServiceDetails.jsx";
 import AppointmentBooking from "./pages/Paitent/AppointmentBooking.jsx";
+import UserDoctors from "./pages/Paitent/Doctors.jsx";
+import UserServices from "./pages/Paitent/Services.jsx";
+import PaitentAppointments from "./pages/Paitent/Appointments.jsx";
+import DoctorAppointments from "./pages/Doctor/Appointments.jsx";
 
 const App = () => {
   return (
@@ -111,14 +114,6 @@ const App = () => {
             }
           />
           <Route
-            path="/admin/service-details/:serviceId"
-            element={
-              <ProtectedRoute role={["admin"]}>
-                <AdminServiceDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/admin/reports"
             element={
               <ProtectedRoute role={["admin"]}>
@@ -139,7 +134,7 @@ const App = () => {
             path="/doctor/appointments"
             element={
               <ProtectedRoute role={["doctor"]}>
-                <Dashboard />
+                <DoctorAppointments />
               </ProtectedRoute>
             }
           />
@@ -164,12 +159,12 @@ const App = () => {
             path="/doctors"
             element={
               <ProtectedRoute role={["patient"]}>
-                <Dashboard />
+                <UserDoctors />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/appoint-booking/:userId"
+            path="/appoint-booking/:doctorId"
             element={
               <ProtectedRoute role={["patient"]}>
                 <AppointmentBooking />
@@ -180,7 +175,7 @@ const App = () => {
             path="/services"
             element={
               <ProtectedRoute role={["patient"]}>
-                <Dashboard />
+                <UserServices />
               </ProtectedRoute>
             }
           />
@@ -188,7 +183,7 @@ const App = () => {
             path="/appointments"
             element={
               <ProtectedRoute role={["patient"]}>
-                <Dashboard />
+                <PaitentAppointments />
               </ProtectedRoute>
             }
           />
@@ -198,6 +193,14 @@ const App = () => {
             element={
               <ProtectedRoute role={["doctor", "patient"]}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/service-details/:serviceId"
+            element={
+              <ProtectedRoute role={["admin", "doctor", "patient"]}>
+                <ServiceDetails />
               </ProtectedRoute>
             }
           />
@@ -214,14 +217,6 @@ const App = () => {
             element={
               <ProtectedRoute role={["doctor", "patient"]}>
                 <UserDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/service-details/:serviceId"
-            element={
-              <ProtectedRoute role={["doctor", "patient"]}>
-                <ServiceDetails />
               </ProtectedRoute>
             }
           />

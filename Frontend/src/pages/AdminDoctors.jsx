@@ -20,7 +20,7 @@ import {
 import { getServicesHelper } from "../services/AdminServices";
 import { getDoctorExperince, timeAgo } from "../utils/Helper";
 import Loader from "../components/Loader";
-import { CircleCheckBig, CircleX, Eye, Image, UserCheck } from "lucide-react";
+import { CircleCheckBig, CircleX, Eye, Image, UserCheck, UserCog, Users, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from 'react-router-dom';
 
@@ -367,14 +367,14 @@ const AdminDoctors = () => {
           iconBg="#00c29b"
           title="Total Doctors"
           value={countsStates?.totalUsers || 0}
-          icon={UserCheck}
+          icon={Users}
           loading={countLoading}
         />
         <StatesCard
           iconBg="rgb(193 198 17)"
           title="Pending Doctors"
           value={countsStates?.pendingUsers || 0}
-          icon={UserCheck}
+          icon={UserCog}
           loading={countLoading}
         />
         <StatesCard
@@ -388,7 +388,7 @@ const AdminDoctors = () => {
           iconBg="rgb(255, 0, 0)"
           title="Rejected Doctors"
           value={countsStates?.rejectedUsers || 0}
-          icon={UserCheck}
+          icon={XCircle}
           loading={countLoading}
         />
       </div>

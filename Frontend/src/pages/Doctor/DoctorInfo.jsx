@@ -4,6 +4,7 @@ import {
   Input,
   LoadMore,
   SearchInput,
+  Selector,
 } from "../../components/CustomComponents";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
@@ -13,7 +14,7 @@ import { Plus, X } from "lucide-react";
 import { useDebounce } from "../../utils/hooks/useDebounce";
 import { getServicesHelper } from "../../services/AdminServices";
 import { limit } from "../../utils/constants";
-import { getAdminId, getUserById } from "../../utils/Helper";
+import { getAdminId } from "../../utils/Helper";
 import { addReportHelper } from "../../services/ReportsHelper";
 
 const DoctorInfo = () => {
@@ -24,14 +25,16 @@ const DoctorInfo = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [timeCycle, setTimeCycle] = useState("");
+  const [timeCycleValue, setTimeCycleValue] = useState("");
+  const [timeCycleType, setTimeCycleType] = useState("min");
   const [available, setAvailable] = useState(true);
   const [specialist, setSpecialist] = useState([]);
   const [educationInput, setEducationInput] = useState("");
   const [educationAndTraining, setEducationAndTraining] = useState([]);
   const [availableDayInput, setAvailableDayInput] = useState({
-    day: "",
-    start: "",
-    end: "",
+    day: "Monday",
+    start: "00:00",
+    end: "00:00",
   });
   const [availableDays, setAvailableDays] = useState([]);
 
@@ -44,21 +47,6 @@ const DoctorInfo = () => {
   const [total, setTotal] = useState(0);
   const debouncedSearch = useDebounce(searchServices, 500);
 
-  // useEffect(() => {
-  //   fetchAdmin();
-  // }, []);
-
-  // const fetchAdmin = async () => {
-  //   try {
-  //     const res = await getAdminId();
-  //     console.log("Admin ID:", res?.adminId);
-  //     const adminData = await getUserById(res?.adminId);
-  //     console.log("adminData--->", adminData);
-  //   } catch (err) {
-  //     console.error("Failed to get admin ID:", err);
-  //   }
-  // };
-
   useEffect(() => {
     if (currentUser) {
       setLocation(currentUser.location || "");
@@ -69,6 +57,14 @@ const DoctorInfo = () => {
       setSpecialist(currentUser.specialist || []);
       setEducationAndTraining(currentUser.educationAndTraining || []);
       setAvailableDays(currentUser.availableDays || []);
+      if (currentUser?.timeCycle) {
+        const match = currentUser.timeCycle.match(/^(\d+)([a-zA-Z]+)$/);
+
+        if (match) {
+          setTimeCycleValue(match?.[1] || "");
+          setTimeCycleType(match?.[2] || "min");
+        }
+      }
     }
   }, [currentUser]);
 
@@ -76,6 +72,16 @@ const DoctorInfo = () => {
     if (!debouncedSearch.trim()) return setServices([]);
     getServices(1, debouncedSearch);
   }, [debouncedSearch]);
+
+  useEffect(() => {
+    if (!timeCycleValue) {
+      setTimeCycle("");
+      return;
+    }
+
+    const mergedValue = `${timeCycleValue}${timeCycleType}`;
+    setTimeCycle(mergedValue);
+  }, [timeCycleValue, timeCycleType]);
 
   const getServices = async (nextPage = 1, searchValue = searchServices) => {
     if (!debouncedSearch.trim()) return setServices([]);
@@ -157,9 +163,13 @@ const DoctorInfo = () => {
 
   const handleAddDay = () => {
     const { day, start, end } = availableDayInput;
-    if (!day || !start || !end) return; // ignore incomplete input
+    if (!day || !start || !end) return;
     setAvailableDays([...availableDays, { day, start, end }]);
-    setAvailableDayInput({ day: "", start: "", end: "" });
+    setAvailableDayInput({
+      day: "Monday",
+      start: "00:00",
+      end: "00:00",
+    });
   };
 
   const handleRemoveDay = (index) => {
@@ -216,12 +226,28 @@ const DoctorInfo = () => {
           placeholder="150"
           InputType="number"
         />
-        <Input
-          label="Session time cycle"
-          value={timeCycle}
-          setValue={setTimeCycle}
-          placeholder="30min or 1h..."
-        />
+        <div className="auth-multi-input-wrapper">
+          <div>
+            <Input
+              label="Session time cycle"
+              value={timeCycleValue}
+              setValue={setTimeCycleValue}
+              InputType="number"
+              placeholder="30min or 1h..."
+              margin="6px 0px 0px"
+            />
+          </div>
+          <Selector
+            filter={timeCycleType}
+            setFilter={setTimeCycleType}
+            margin="0px 0px 2px"
+            style={{ width: "fit-content" }}
+            options={[
+              { label: "Min", filter: "min" },
+              { label: "hour", filter: "hr" },
+            ]}
+          />
+        </div>
       </section>
 
       <section className="settings-section">
@@ -345,14 +371,24 @@ const DoctorInfo = () => {
           <div className="auth-multi-input-wrapper">
             <div className="settings-grid-three">
               <div>
-                <Input
-                  label="Day"
-                  value={availableDayInput.day}
-                  placeholder="Monday..."
-                  setValue={(val) =>
+                <label className="custom-input-label">Day</label>
+                <Selector
+                  filter={availableDayInput.day}
+                  setFilter={(val) =>
                     setAvailableDayInput((p) => ({ ...p, day: val }))
                   }
-                  margin="6px 0px 0px"
+                  position="left"
+                  margin="7px 0px 0px"
+                  style={{ width: "100%", padding: "11px 7px" }}
+                  options={[
+                    { label: "Monday", filter: "Monday" },
+                    { label: "Tuesday", filter: "Tuesday" },
+                    { label: "Wednesday", filter: "Wednesday" },
+                    { label: "Thursday", filter: "Thursday" },
+                    { label: "Friday", filter: "Friday" },
+                    { label: "Saturday", filter: "Saturday" },
+                    { label: "Sunday", filter: "Sunday" },
+                  ]}
                 />
               </div>
               <div>

@@ -67,6 +67,7 @@
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .profile-image-inner {
@@ -183,6 +184,7 @@
   gap: 6px;
   min-width: 100px;
   white-space: nowrap;
+  width: 100%;
 }
 
 .customs-filter-selector > span:first-child {
@@ -204,6 +206,9 @@
   animation: fadeInUp 0.45s ease forwards;
 }
 
+.customs-filter-selection-container-left {
+  left: 0px;
+}
 .customs-filter-item {
   text-align: start;
   padding: 11px 12px;
@@ -319,7 +324,7 @@
 
 .custom-service-card:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 .custom-service-card:hover > .custom-service-icon {
@@ -378,6 +383,13 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.custom-service-link > span{
+  transition: 0.3s;
+}
+.custom-service-link:hover > span{
+  transform: translateX(2px);
 }
 
 .custom-context-menu {

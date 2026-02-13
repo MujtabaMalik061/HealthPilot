@@ -75,7 +75,8 @@ const DoctorDetails = () => {
   const [doctor, setDoctor] = useState(null);
 
   useEffect(() => {
-    if (doctorId) fetchDoctor(doctorId);
+  if (doctorId) fetchDoctor(doctorId);
+  else setLoading(false);
   }, [doctorId]);
 
   const fetchDoctor = async (id) => {

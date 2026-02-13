@@ -1,4 +1,4 @@
-import API from "./api"
+import API from "./api";
 
 export const getDoctorExperince = (value) => {
   if (!value) return 0;
@@ -17,6 +17,32 @@ export const getDoctorExperince = (value) => {
   if (isNaN(startYear) || startYear > currentYear) return 0;
 
   return currentYear - startYear;
+};
+
+export const getDoctorAvailabilty = (availableDays = []) => {
+  if (!availableDays.length) return false;
+
+  const now = new Date();
+  const currentDay = now.toLocaleDateString("en-US", { weekday: "long" });
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const convertToMinutes = (timeStr) => {
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+  };
+  const todaySchedule = availableDays.find((item) => item.day === currentDay);
+
+  if (!todaySchedule) return false;
+
+  const startMinutes = convertToMinutes(todaySchedule.start);
+  const endMinutes = convertToMinutes(todaySchedule.end);
+
+  return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
 };
 
 export const getInitialsByName = (name) => {
@@ -61,8 +87,18 @@ export const timeAgo = (dateString) => {
 export const formateTimeInM = (time) => {
   if (!time) return "N/A";
 
-  const [hoursStr, minutes] = time.split(":");
+  if (/am|pm/i.test(time)) {
+    return time;
+  }
+
+  const parts = time.split(":");
+  if (parts.length !== 2) return time;
+
+  const [hoursStr, minutes] = parts;
   let hours = parseInt(hoursStr, 10);
+
+  if (isNaN(hours)) return time;
+
   const ampm = hours >= 12 ? "PM" : "AM";
 
   hours = hours % 12;
@@ -135,4 +171,3 @@ export const getUserById = async (id) => {
     throw err.response?.data;
   }
 };
-

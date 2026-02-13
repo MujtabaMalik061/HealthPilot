@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import "../assets/style/CustomComponents.css";
 import {
   ArrowLeft,
@@ -16,7 +16,6 @@ import {
   X,
 } from "lucide-react";
 import { IMAGES } from "../utils/constants";
-import { getInitialsByName } from "../utils/Helper";
 import Loader from "./Loader";
 import { useNavigate } from "react-router";
 
@@ -161,6 +160,8 @@ export const Selector = ({
   filter,
   setFilter,
   options,
+  style = {},
+  margin = "",
   position = "right",
 }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -196,6 +197,7 @@ export const Selector = ({
       ref={selectorRef}
       onClick={() => setIsFilterOpen(!isFilterOpen)}
       disabled={disabled}
+      style={{ margin, ...style }}
       className={`customs-filter-container ${disabled ? "disabled" : ""}`}
     >
       <div className="customs-filter-selector">
@@ -424,7 +426,8 @@ export const ProfileImage = ({
 };
 
 export const ServiceCard = ({
-  viewDoctor = false,
+  serviceId = "",
+  viewDetails = false,
   Icon = "",
   title = "",
   description = "",
@@ -432,6 +435,7 @@ export const ServiceCard = ({
   longPress = false,
   longPressOptions = [],
 }) => {
+  const navigate = useNavigate();
   const [menu, setMenu] = useState(false);
 
   const menuRef = useRef(null);
@@ -465,10 +469,15 @@ export const ServiceCard = ({
 
       <div className="custom-service-footer">
         <span className="custom-service-doctors">{doctors} Doctors</span>
-
-        {viewDoctor && (
-          <button className="custom-service-link">
-            View Doctors <ArrowRight size={16} />
+        {viewDetails && (
+          <button
+            onClick={() => navigate(`/service-details/${serviceId}`)}
+            className="custom-service-link"
+          >
+            View Details
+            <span className="icon">
+             <ArrowRight size={16} />
+            </span>
           </button>
         )}
       </div>
@@ -499,6 +508,7 @@ export const ServiceCard = ({
 
 export const DoctorCard = ({
   profileImage = "N/A",
+  doctorId = "",
   name = "N/A",
   specialty = "N/A",
   rating = 0,
@@ -509,6 +519,9 @@ export const DoctorCard = ({
   available = false,
   isDetails = true,
 }) => {
+  const navigate = useNavigate();
+  const plusSpecialty = specialty?.length > 0 ? specialty?.length - 1 : 0;
+
   return (
     <div className="custom-doctor-card">
       <ProfileImage
@@ -516,7 +529,17 @@ export const DoctorCard = ({
         className="custom-doctor-avatar"
       />
       <h3 className="custom-doctor-name">{name}</h3>
-      <p className="custom-doctor-specialty">{specialty}</p>
+      <p className="custom-doctor-specialty">
+        {specialty?.[0] || "N/A"}
+        {plusSpecialty !== 0 && (
+          <span
+            style={{ padding: "4px", marginLeft: "4px" }}
+            className="doctor-details-status active"
+          >
+            +{plusSpecialty}
+          </span>
+        )}
+      </p>
       <div className="custom-doctor-rating">
         <Star size={16} color="#f4b400" fill="#f4b400" />
         <span>
@@ -538,7 +561,7 @@ export const DoctorCard = ({
           <div className="custom-doctor-divider"></div>
           <div className="custom-doctor-footer">
             <div className="custom-doctor-price">
-              <strong>${price}</strong>
+              <strong>Rs.{price}</strong>
               <span>/visit</span>
             </div>
 
@@ -549,8 +572,18 @@ export const DoctorCard = ({
             </span>
           </div>
           <div className="custom-doctor-actions">
-            <button className="custom-doctor-btn-outline">View Profile</button>
-            <button className="custom-doctor-btn-primary">Book Now</button>
+            <button
+              onClick={() => navigate(`/doctor-details/${doctorId}`)}
+              className="custom-doctor-btn-outline"
+            >
+              View Profile
+            </button>
+            <button
+              onClick={() => navigate(`/appoint-booking/${doctorId}`)}
+              className="custom-doctor-btn-primary"
+            >
+              Book Now
+            </button>
           </div>
         </>
       )}
@@ -777,26 +810,41 @@ export const ImageViewModel = ({ Image = "", onClose }) => {
   );
 };
 
-export const GoBackBtn = ({ title = "", onBack }) => {
+// export const GoBackBtn = ({ title = "", onBack }) => {
+//   const navigate = useNavigate();
+
+//   return (
+//     <div className="custom-details-page-back-btn">
+//       <button
+//         onClick={() => {
+//           if (typeof onBack === "number") {
+//             navigate(onBack);
+//           } else if (typeof onBack === "function") {
+//             onBack();
+//           } else {
+//             navigate(onBack);
+//           }
+//         }}
+//       >
+//         <span className="icon">
+//           <ArrowLeft />
+//         </span>
+//         <p>{title}</p>
+//       </button>
+//     </div>
+//   );
+// };
+
+export const GoBackBtn = () => {
   const navigate = useNavigate();
 
   return (
     <div className="custom-details-page-back-btn">
-      <button
-        onClick={() => {
-          if (typeof onBack === "number") {
-            navigate(onBack);
-          } else if (typeof onBack === "function") {
-            onBack();
-          } else {
-            navigate(onBack);
-          }
-        }}
-      >
+      <button onClick={() => navigate(-1)}>
         <span className="icon">
           <ArrowLeft />
         </span>
-        <p>{title}</p>
+        Go Back
       </button>
     </div>
   );

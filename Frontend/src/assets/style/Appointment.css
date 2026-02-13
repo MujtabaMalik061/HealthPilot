@@ -1,0 +1,253 @@
+.appoint-book-wrapper {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.appoint-book-right {
+  width: 100%;
+}
+.appoint-book-left {
+  width: 100%;
+}
+
+.appoint-book-doctor-card {
+  padding: 10px;
+}
+
+.appoint-book-doctor-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.appoint-book-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #e6f4f1;
+  color: #2a9d8f;
+  font-weight: 600;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appoint-book-doctor-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.appoint-book-doctor-speciality {
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+
+.appoint-book-fee-label {
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.appoint-book-fee-amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.appoint-book-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: var(--primary-hover);
+  color: var(--primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.appoint-book-submit-btn:hover {
+  transform: scale(1.02);
+  border: 1px solid var(--primary);
+}
+
+.appoint-book-submit-btn.disabled {
+  background: #7fb8ad;
+  color: white;
+  cursor: not-allowed;
+}
+
+.appoint-book-submit-btn.disabled:hover {
+  background: #7fb8ad;
+  color: white;
+}
+
+/* RIGHT SIDE */
+.appoint-book-heading {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.appoint-book-schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.appoint-book-subtitle {
+  margin-bottom: 12px;
+  color: var(--card-foreground);
+  font-weight: 500;
+}
+
+.appoint-book-time-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.appoint-book-time-slot {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  cursor: pointer;
+  color: var(--card-foreground);
+  transition: 0.2s;
+}
+
+.appoint-book-time-slot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: var(--primary-hover);
+}
+
+.appoint-book-time-slot.active {
+  border-color: var(--primary);
+  color: #fff;
+  background-color: var(--primary);
+}
+
+/* =============== Calendar Style =============== */
+
+.appoint-book-calendar-box {
+  height: fit-content;
+  width: fit-content;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-foreground);
+  overflow: hidden;
+}
+
+.appoint-book-calendar-ui {
+  width: 100% !important;
+  border: none !important;
+  background: var(--card) !important;
+}
+
+.appoint-book-calendar-ui .react-calendar__navigation {
+  border-bottom: 1px solid var(--border);
+}
+
+.appoint-book-nav-label,.react-calendar__navigation__label {
+  font-weight: 600;
+  color: var(--card-foreground) !important;
+  font-size: 16px;
+}
+
+.appoint-book-calendar-ui .react-calendar__navigation button {
+  background: transparent;
+  color: var(--card-foreground);
+  /* border-radius: 8px; */
+  transition: 0.2s ease;
+}
+
+.appoint-book-calendar-ui .react-calendar__navigation button:enabled:hover {
+  background: var(--primary-hover);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+/* Disabled arrows — no hover, muted */
+.appoint-book-calendar-ui .react-calendar__navigation button:disabled {
+  color: #ababab;
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.appoint-book-calendar-ui .react-calendar__navigation button:disabled:hover {
+  background: transparent;
+  color: #ababab;
+}
+
+/* .appoint-book-calendar-ui .react-calendar__navigation button {
+  background: transparent;
+  color: var(--card-foreground);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.appoint-book-calendar-ui .react-calendar__navigation button:hover {
+  background: transparent;
+} */
+
+.appoint-book-calendar-ui .react-calendar__tile {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--card-foreground);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appoint-book-calendar-ui .react-calendar__tile:enabled:hover {
+  color: var(--primary);
+  background: var(--primary-hover);
+}
+
+.appoint-book-calendar-ui .react-calendar__tile--now {
+  background: transparent !important;
+  color: var(--card-foreground);
+}
+
+.appoint-book-calendar-ui .react-calendar__tile--active {
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+.appoint-book-calendar-ui .react-calendar__tile:disabled {
+  background: transparent !important;
+  color: #ababab !important;
+  cursor: not-allowed;
+}
+
+.appoint-book-calendar-ui .react-calendar__tile:disabled:hover {
+  background: transparent !important;
+  color: #ababab !important;
+}
+
+.appoint-book-calendar-ui .react-calendar__month-view__weekdays {
+  /* text-transform: none; */
+  font-weight: 500;
+  color: var(--card-foreground);
+}
+
+.appoint-book-calendar-ui button:focus {
+  outline: none;
+}

@@ -38,3 +38,11 @@ export const deleteServiceHelper = async (id) => {
   }
 };
 
+export const getServiceByIdHelper = async (Id) => {
+  try {
+    const res = await API.get(`/api/services/getServiceById/${Id}`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data;
+  }
+};

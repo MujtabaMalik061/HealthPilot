@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {formateDate, getUserById} from "../../utils/Helper";
+import { formateDate, getUserById } from "../../utils/Helper";
 import { useParams } from "react-router-dom";
 import { GoBackBtn, ProfileImage } from "../CustomComponents";
 import "../../assets/style/DoctorDetails.css";
@@ -7,7 +7,11 @@ import Loader from "../Loader";
 import { IMAGES } from "../../utils/constants";
 import { updateUserStatusHelper } from "../../services/UsersHelper";
 import { toast } from "sonner";
-import { Award, CalendarClockIcon, LucideCalendarRange, Mail} from "lucide-react";
+import {
+  CalendarClockIcon,
+  LucideCalendarRange,
+  Mail,
+} from "lucide-react";
 
 const SectionCard = ({
   title = "",
@@ -27,7 +31,6 @@ const SectionCard = ({
   );
 };
 
-
 const DoctorDetails = () => {
   const { userId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -36,6 +39,7 @@ const DoctorDetails = () => {
 
   useEffect(() => {
     if (userId) fetchUser(userId);
+    else setLoading(false);
   }, [userId]);
 
   const fetchUser = async (id) => {
@@ -53,7 +57,7 @@ const DoctorDetails = () => {
     try {
       setStatusLoading(true);
       await updateUserStatusHelper(userId, newStatus);
-      setDoctor((prev) => ({ ...prev, status: newStatus }));
+      setUser((prev) => ({ ...prev, status: newStatus }));
       toast.success("Status change successfuly");
     } catch (err) {
       console.error("Failed to change status:", err);
@@ -70,7 +74,6 @@ const DoctorDetails = () => {
       </>
     );
   }
-  
 
   return (
     <div className="page-container">

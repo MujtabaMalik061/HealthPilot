@@ -13,7 +13,7 @@ import {
 } from "../services/UsersHelper";
 import { timeAgo } from "../utils/Helper";
 import Loader from "../components/Loader";
-import { UserCheck } from "lucide-react";
+import { UserCheck, Users, XCircle } from "lucide-react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -212,7 +212,7 @@ const AdminUsers = () => {
           iconBg="#00c29b"
           title="Total Users"
           value={countsStates?.totalUsers || 0}
-          icon={UserCheck}
+          icon={Users}
           loading={countLoading}
         />
         <StatesCard
@@ -226,7 +226,7 @@ const AdminUsers = () => {
           iconBg="rgb(255, 0, 0)"
           title="Rejected Users"
           value={countsStates?.rejectedUsers || 0}
-          icon={UserCheck}
+          icon={XCircle}
           loading={countLoading}
         />
       </div>
