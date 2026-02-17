@@ -32,7 +32,6 @@ export const getAllServices = async (req, res) => {
     const skip = (page - 1) * limit;
     const search = req.query.search || "";
 
-    // Build query: filter by title OR description (case-insensitive)
     const query = search
       ? {
           $or: [
@@ -43,7 +42,7 @@ export const getAllServices = async (req, res) => {
       : {};
 
     const services = await Service.find(query)
-      .sort({ createdAt: -1 }) // latest first
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("doctors");
@@ -119,7 +118,6 @@ export const updateService = async (req, res) => {
     const { id } = req.params;
     const { title } = req.body;
 
-    // 🔍 check duplicate title (exclude current service)
     if (title) {
       const existingService = await Service.findOne({
         title: title.trim(),

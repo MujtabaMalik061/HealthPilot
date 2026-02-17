@@ -48,7 +48,7 @@ export const getSingleUserAppointmentsHelper = async (
 
 export const getAppointmentByIdHelper = async (Id) => {
   try {
-    const res = await API.get(`/api/appointments/getAppointmentByI/${Id}`);
+    const res = await API.get(`/api/appointments/getAppointmentById/${Id}`);
     return res.data;
   } catch (err) {
     throw err;

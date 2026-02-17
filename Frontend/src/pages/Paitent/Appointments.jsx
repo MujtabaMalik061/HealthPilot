@@ -155,7 +155,7 @@ const Appointments = () => {
         <div className="custom-table-action-container">
           <button
             className="custom-table-action-btn active"
-            onClick={() => navigate(`/admin/user-details/${c._id}`)}
+            onClick={() => navigate(`/appointment-details/${c._id}`)}
           >
             View Details
           </button>

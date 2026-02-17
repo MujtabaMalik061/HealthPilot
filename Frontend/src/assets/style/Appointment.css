@@ -1,3 +1,19 @@
+.appointment-description {
+  padding-top: 7px;
+  white-space: pre-wrap;
+}
+
+.appointment-user-card {
+  padding-top: 20px;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* =============== Appointment book Style =============== */
 .appoint-book-wrapper {
   display: flex;
   align-items: start;
@@ -91,7 +107,6 @@
   color: white;
 }
 
-/* RIGHT SIDE */
 .appoint-book-heading {
   font-size: 22px;
   font-weight: 600;
@@ -162,7 +177,8 @@
   border-bottom: 1px solid var(--border);
 }
 
-.appoint-book-nav-label,.react-calendar__navigation__label {
+.appoint-book-nav-label,
+.react-calendar__navigation__label {
   font-weight: 600;
   color: var(--card-foreground) !important;
   font-size: 16px;
@@ -171,7 +187,6 @@
 .appoint-book-calendar-ui .react-calendar__navigation button {
   background: transparent;
   color: var(--card-foreground);
-  /* border-radius: 8px; */
   transition: 0.2s ease;
 }
 
@@ -181,7 +196,6 @@
   cursor: pointer;
 }
 
-/* Disabled arrows — no hover, muted */
 .appoint-book-calendar-ui .react-calendar__navigation button:disabled {
   color: #ababab;
   background: transparent;
@@ -192,17 +206,6 @@
   background: transparent;
   color: #ababab;
 }
-
-/* .appoint-book-calendar-ui .react-calendar__navigation button {
-  background: transparent;
-  color: var(--card-foreground);
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.appoint-book-calendar-ui .react-calendar__navigation button:hover {
-  background: transparent;
-} */
 
 .appoint-book-calendar-ui .react-calendar__tile {
   width: 40px !important;
@@ -243,7 +246,6 @@
 }
 
 .appoint-book-calendar-ui .react-calendar__month-view__weekdays {
-  /* text-transform: none; */
   font-weight: 500;
   color: var(--card-foreground);
 }

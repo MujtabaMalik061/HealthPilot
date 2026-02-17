@@ -25,8 +25,8 @@ export const getAllAppointments = async (req, res) => {
     }
 
     const appointments = await Appointment.find(query)
-      .populate("doctor", "name email")
-      .populate("patient", "name email")
+      .populate("doctor", "profilImg name email")
+      .populate("patient", "profilImg name email")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -65,8 +65,8 @@ export const getSingleUserAppointments = async (req, res) => {
     }
 
     const appointments = await Appointment.find(query)
-      .populate("doctor", "name email")
-      .populate("patient", "name email")
+      .populate("doctor", "profilImg name email")
+      .populate("patient", "profilImg name email")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -144,8 +144,8 @@ export const getAppointmentById = async (req, res) => {
     const { Id } = req.params;
 
     const appointment = await Appointment.findById(Id)
-      .populate("doctor", "name email")
-      .populate("patient", "name email");
+      .populate("doctor", "profilImg name email")
+      .populate("patient", "profilImg name email");
 
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
@@ -342,7 +342,6 @@ export const addAppointment = async (req, res) => {
 export const updateAppointment = async (req, res) => {
   try {
     const { Id } = req.params;
-
     const appointment = await Appointment.findById(Id);
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
@@ -401,4 +400,3 @@ export const deleteAppointment = async (req, res) => {
     });
   }
 };
-

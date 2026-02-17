@@ -1,4 +1,3 @@
-import User from "../models/user.model.js";
 import Report from "../models/reports.model.js";
 
 export const getReports = async (req, res) => {

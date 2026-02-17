@@ -175,6 +175,10 @@
 
 .doctor-consultation-content > span {
   color: var(--muted-foreground);
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .doctor-details-book-btn {

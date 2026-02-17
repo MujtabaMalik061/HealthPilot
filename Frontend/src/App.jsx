@@ -33,6 +33,7 @@ import UserDoctors from "./pages/Paitent/Doctors.jsx";
 import UserServices from "./pages/Paitent/Services.jsx";
 import PaitentAppointments from "./pages/Paitent/Appointments.jsx";
 import DoctorAppointments from "./pages/Doctor/Appointments.jsx";
+import AppointmentDetails from "./components/DetailsPages/AppointmentDetails.jsx";
 
 const App = () => {
   return (
@@ -201,6 +202,14 @@ const App = () => {
             element={
               <ProtectedRoute role={["admin", "doctor", "patient"]}>
                 <ServiceDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/appointment-details/:appointmentId"
+            element={
+              <ProtectedRoute role={["admin", "doctor", "patient"]}>
+                <AppointmentDetails />
               </ProtectedRoute>
             }
           />
