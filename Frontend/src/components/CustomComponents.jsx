@@ -476,7 +476,7 @@ export const ServiceCard = ({
           >
             View Details
             <span className="icon">
-             <ArrowRight size={16} />
+              <ArrowRight size={16} />
             </span>
           </button>
         )}
@@ -591,67 +591,6 @@ export const DoctorCard = ({
   );
 };
 
-export const PatientCard = ({
-  profileImage = "N/A",
-  name = "N/A",
-  specialty = "N/A",
-  rating = 0,
-  reviews = 0,
-  experience = 0,
-  treatments = 0,
-  price = 0,
-  available = false,
-  isDetails = true,
-}) => {
-  return (
-    <div className="custom-doctor-card">
-      <ProfileImage
-        Image={profileImage || IMAGES.PlaceHolder}
-        className="custom-doctor-avatar"
-      />
-      <h3 className="custom-doctor-name">{name}</h3>
-      <p className="custom-doctor-specialty">{specialty}</p>
-      <div className="custom-doctor-rating">
-        <Star size={16} color="#f4b400" fill="#f4b400" />
-        <span>
-          {rating} <small>({reviews} reviews)</small>
-        </span>
-      </div>
-      <div className="custom-doctor-meta">
-        <div className="custom-doctor-meta-item">
-          <Clock size={16} />
-          <span>{experience} yrs exp</span>
-        </div>
-        <div className="custom-doctor-meta-item">
-          <Calendar size={16} />
-          <span>{treatments} treatments</span>
-        </div>
-      </div>
-      {isDetails && (
-        <>
-          <div className="custom-doctor-divider"></div>
-          <div className="custom-doctor-footer">
-            <div className="custom-doctor-price">
-              <strong>${price}</strong>
-              <span>/visit</span>
-            </div>
-
-            <span
-              className={`custom-doctor-status ${available ? "available" : "Unavailable"}`}
-            >
-              {available ? "Available" : "Unavailable"}
-            </span>
-          </div>
-          <div className="custom-doctor-actions">
-            <button className="custom-doctor-btn-outline">View Profile</button>
-            <button className="custom-doctor-btn-primary">Book Now</button>
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
-
 export const Header = ({ title = "", desc = "" }) => {
   return (
     <div className="custom-header-container">
@@ -689,6 +628,7 @@ export const LoadMore = ({
 
 export const StatesCard = ({
   iconBg = "",
+  iconColor = "#fff",
   title = "",
   value = "",
   stringValue = "",
@@ -711,7 +651,49 @@ export const StatesCard = ({
         </h3>
       </div>
       <div style={{ background: iconBg }} className="custom-stat-icon">
-        <Icon />
+        <Icon color={iconColor} />
+      </div>
+    </div>
+  );
+};
+
+export const DashBoardStatesCard = ({
+  iconBg = "",
+  iconColor = "#fff",
+  title = "",
+  value = "",
+  subvalue = "",
+  stringValue = "",
+  icon: Icon,
+  loading = false,
+}) => {
+  return (
+    <div className="custom-stat-card">
+      <div className="custom-stat-card-content">
+        <p
+          className="custom-stat-title"
+          style={{ color: "var(--muted-foreground)", fontWeight: "400" }}
+        >
+          {title}
+        </p>
+        {loading ? (
+          <Loader
+            size="25"
+            stroke="2"
+            style={{ justifyContent: "start", alignItems: "end" }}
+          />
+        ) : (
+          <>
+            <h3 className="custom-stat-value">
+              {value.toLocaleString()}
+              {stringValue}
+            </h3>
+            {subvalue && <p style={{ color: "var(--primary)" }}>{subvalue}</p>}
+          </>
+        )}
+      </div>
+      <div style={{ background: iconBg }} className="custom-stat-icon">
+        <Icon color={iconColor} />
       </div>
     </div>
   );

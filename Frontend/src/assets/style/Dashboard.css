@@ -1,0 +1,63 @@
+.dashboard-charts-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.dashboard-chart-card {
+  width: 100%;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.dashboard-chart-card-header {
+  padding: 17px 0px 0px 16px;
+}
+
+.chart-content-cotainer {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  padding: 30px 10px 10px 10px;
+  margin-left: -20px;
+}
+
+.recharts-wrapper *,
+.recharts-wrapper *:focus {
+  outline: none !important;
+}
+
+/* =================== Doctor Appointments =================== */
+
+.doctor-dashboard-latest-appointments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.doctor-dashboard-latest-appointments-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.doctor-dashboard-latest-appointments-card-left {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+
+.doctor-dashboard-latest-appointments-profile-image {
+  height: 60px;
+  width: 60px;
+}

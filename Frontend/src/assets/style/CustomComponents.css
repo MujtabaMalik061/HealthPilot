@@ -810,14 +810,14 @@
   border: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
   box-shadow: 0 0px 10px rgba(0, 0, 0, 0.034);
 }
 
 .custom-stat-card-content {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  /* gap: 30px; */
   height: 100%;
   align-items: start;
   justify-content: space-between;

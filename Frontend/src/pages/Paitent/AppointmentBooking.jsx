@@ -5,7 +5,7 @@ import {
   Input,
   ProfileImage,
 } from "../../components/CustomComponents";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getUserById } from "../../utils/Helper";
 import Loader from "../../components/Loader";
 import "../../assets/style/Appointment.css";
@@ -33,6 +33,7 @@ const handleDateChange = (date) => {
 const AppointmentBooking = () => {
   const { currentUser } = useAuth();
   const { doctorId } = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [appointLoading, setAppointLoading] = useState(false);
@@ -205,7 +206,8 @@ const AppointmentBooking = () => {
     };
     try {
       setAppointLoading(true);
-      await addAppointmentHelper(data);
+      const res = await addAppointmentHelper(data);
+      navigate(`/appointment-details/${res?.data?._id}`);
       toast.success("Appointment request submit.");
     } catch (err) {
       console.error("Failed to add appointment:", err);
@@ -214,7 +216,6 @@ const AppointmentBooking = () => {
       setAppointLoading(false);
     }
   };
-
 
   return (
     <div className="page-container">
@@ -252,7 +253,7 @@ const AppointmentBooking = () => {
                   <div className="appoint-book-time">
                     <p className="appoint-book-subtitle">Select Time</p>
                     {loadingAvailableTime ? (
-                      <Loader stroke="3"/>
+                      <Loader stroke="3" />
                     ) : availableTimes?.length > 0 ? (
                       <div className="appoint-book-time-grid">
                         {availableTimes?.map((time, i) => (
@@ -324,7 +325,9 @@ const AppointmentBooking = () => {
                   <div>
                     <h3 className="appoint-book-doctor-name">{doctor?.name}</h3>
                     <p className="appoint-book-doctor-speciality">
-                      {doctor?.specialist || "Specialist"}
+                      {doctor?.specialist?.length > 0
+                        ? doctor.specialist.join(", ")
+                        : ""}
                     </p>
                   </div>
                 </div>

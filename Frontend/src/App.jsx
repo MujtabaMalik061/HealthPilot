@@ -14,6 +14,7 @@ import SignIn from "./auth/SignIn.jsx";
 import SignUp from "./auth/SignUp.jsx";
 import AppLayout from "./layout/AppLayout.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import DoctorDashboard from "./pages/Doctor/DashBoard.jsx";
 import { ProtectedRoute, PublicRoute } from "./routes/RouteGuards.jsx";
 import NotFound from "./components/NotFound.jsx";
 import AdminDoctors from "./pages/AdminDoctors.jsx";
@@ -127,7 +128,7 @@ const App = () => {
             path="/doctor/dashboard"
             element={
               <ProtectedRoute role={["doctor"]}>
-                <Dashboard />
+                <DoctorDashboard />
               </ProtectedRoute>
             }
           />

@@ -1,6 +1,7 @@
 import Appointment from "../models/appointment.model.js";
 import User from "../models/user.model.js";
 import Service from "../models/service.model.js";
+import mongoose from "mongoose";
 
 // admin Dashboard
 
@@ -167,6 +168,12 @@ export const getDoctorCountesStates = async (req, res) => {
   try {
     const { userId } = req.query;
 
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const doctorId = new mongoose.Types.ObjectId(userId);
+
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
@@ -174,15 +181,17 @@ export const getDoctorCountesStates = async (req, res) => {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
+    // 🔹 Total Revenue
     const totalRevenueAgg = await Appointment.aggregate([
-      { $match: { doctor: userId, status: "completed" } },
+      { $match: { doctor: doctorId, status: "completed" } },
       { $group: { _id: null, total: { $sum: "$fee" } } },
     ]);
 
+    // 🔹 This Month Revenue
     const thisMonthRevenueAgg = await Appointment.aggregate([
       {
         $match: {
-          doctor: userId,
+          doctor: doctorId,
           status: "completed",
           createdAt: { $gte: startOfMonth },
         },
@@ -190,28 +199,29 @@ export const getDoctorCountesStates = async (req, res) => {
       { $group: { _id: null, total: { $sum: "$fee" } } },
     ]);
 
+    // 🔹 Counts
     const totalRequests = await Appointment.countDocuments({
-      doctor: userId,
+      doctor: doctorId,
     });
 
     const todayRequests = await Appointment.countDocuments({
-      doctor: userId,
+      doctor: doctorId,
       createdAt: { $gte: startOfToday },
     });
 
     const totalCompleted = await Appointment.countDocuments({
-      doctor: userId,
+      doctor: doctorId,
       status: "completed",
     });
 
     const thisMonthCompleted = await Appointment.countDocuments({
-      doctor: userId,
+      doctor: doctorId,
       status: "completed",
       createdAt: { $gte: startOfMonth },
     });
 
     const totalPending = await Appointment.countDocuments({
-      doctor: userId,
+      doctor: doctorId,
       status: "pending",
     });
 
@@ -240,6 +250,12 @@ export const getDoctorCountesStates = async (req, res) => {
 export const getDoctorMonthlyRevenue = async (req, res) => {
   try {
     const { userId } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const doctorId = new mongoose.Types.ObjectId(userId);
     const now = new Date();
     const data = [];
 
@@ -250,12 +266,17 @@ export const getDoctorMonthlyRevenue = async (req, res) => {
       const revenueAgg = await Appointment.aggregate([
         {
           $match: {
-            doctor: userId,
+            doctor: doctorId, // ✅ fixed
             status: "completed",
             createdAt: { $gte: start, $lt: end },
           },
         },
-        { $group: { _id: null, total: { $sum: "$fee" } } },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$fee" },
+          },
+        },
       ]);
 
       data.push({
