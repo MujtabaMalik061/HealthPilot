@@ -31,7 +31,7 @@ export const PublicRoute = ({ children }) => {
     if (authAllow && currentUser?.role) {
       if (currentUser.role === "admin") navigate("/admin/dashboard");
       else if (currentUser.role === "doctor") navigate("/doctor/dashboard");
-      else navigate("/dashboard");
+      else navigate("/doctors");
     }
   }, [authAllow, currentUser, navigate]);
 

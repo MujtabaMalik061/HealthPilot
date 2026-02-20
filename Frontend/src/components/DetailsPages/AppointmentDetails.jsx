@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  formateDate,
-} from "../../utils/Helper";
+import { formateDate } from "../../utils/Helper";
 import { useNavigate, useParams } from "react-router-dom";
 import { GoBackBtn, ProfileImage } from "../CustomComponents";
 import Loader from "../Loader";
 import { IMAGES } from "../../utils/constants";
 import { getAppointmentByIdHelper } from "../../services/AppointmentsServices";
+import { useAuth } from "../../context/AuthContext";
 
 const SectionCard = ({
   title = "",
@@ -35,6 +34,7 @@ const InfoRow = ({ label = "", value = "" }) => (
 
 const AppointmentDetails = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { appointmentId } = useParams();
   const [loading, setLoading] = useState(true);
   const [appointment, setAppointment] = useState(null);
@@ -63,7 +63,12 @@ const AppointmentDetails = () => {
     );
   }
 
-  console.log("doctor--->", appointment);
+  let rejectedBy = null;
+  if (appointment?.cancelledBy === appointment?.patient?._id) {
+    rejectedBy = appointment?.patient;
+  } else if (appointment?.cancelledBy === appointment?.doctor?._id) {
+    rejectedBy = appointment?.doctor;
+  }
 
   return (
     <div className="page-container">
@@ -72,17 +77,28 @@ const AppointmentDetails = () => {
       <div className="doctor-details-wrapper">
         <div className="doctor-details-left">
           <SectionCard title="Appointment Details">
-            <span
-              className={`doctor-status-badge ${
-                appointment?.status === "approved"
-                  ? "approved"
-                  : appointment?.status === "pending"
-                    ? "pending"
-                    : "rejected"
-              }`}
-            >
-              {appointment?.status?.toUpperCase()}
-            </span>
+            <InfoRow
+              label="Appointment Status"
+              value={appointment?.status?.toUpperCase()}
+            />
+            {appointment?.status === "rejected" && (
+              <>
+                <InfoRow
+                  label="Rejected By"
+                  value={rejectedBy?.name || "N/A"}
+                />
+                <div style={{ padding: "10px 8px" }}>
+                  <div className="doctor-details-section-header">
+                    <h3 className="doctor-details-section-title">
+                      Reject Reason
+                    </h3>
+                  </div>
+                  <p className="appointment-description">
+                    {appointment?.rejectReason || "No reason provided."}
+                  </p>
+                </div>
+              </>
+            )}
           </SectionCard>
           <SectionCard title="Appointment Information">
             <InfoRow
@@ -141,6 +157,22 @@ const AppointmentDetails = () => {
                 <strong>{appointment?.doctor?.name || "N/A"}</strong>
                 <p>{appointment?.doctor?.email || "N/A"}</p>
               </div>
+              {appointment?.doctor?._id && currentUser?.role !== "doctor" && (
+                <button
+                  className="appoint-book-submit-btn"
+                  onClick={() => {
+                    if (currentUser?.role === "admin") {
+                      navigate(
+                        `/admin/doctor-details/${appointment?.doctor?._id}`,
+                      );
+                    } else {
+                      navigate(`/doctor-details/${appointment?.doctor?._id}`);
+                    }
+                  }}
+                >
+                  View Details
+                </button>
+              )}
             </div>
           </SectionCard>
 
@@ -154,11 +186,13 @@ const AppointmentDetails = () => {
                 <strong>{appointment?.patient?.name || "N/A"}</strong>
                 <p>{appointment?.patient?.email || "N/A"}</p>
               </div>
-              {appointment?.patient?._id && (
+              {appointment?.patient?._id && currentUser?.role === "admin" && (
                 <button
                   className="appoint-book-submit-btn"
                   onClick={() =>
-                    navigate(`/user-details/${appointment?.patient?._id}`)
+                    navigate(
+                      `/admin/user-details/${appointment?.patient?._id}`,
+                    )
                   }
                 >
                   View Details
@@ -173,49 +207,3 @@ const AppointmentDetails = () => {
 };
 
 export default AppointmentDetails;
-
-/*
-  <div className="report-details-user">
-            <div>
-              <ProfileImage
-                Image={data?.patient?.profilImg || IMAGES.PlaceHolder}
-                className="report-details-image"
-              />
-            </div>
-            <div>
-              <strong className="report-details-role">Patient</strong>
-              <p className="report-details-name">
-                {data?.patient?.name || "N/A"}
-              </p>
-              <p className="report-details-email">
-                {data?.patient?.email || "N/A"}
-              </p>
-            </div>
-          </div>
-          <div className="report-details-box">
-            <p>
-              <strong>Appointment For: </strong>
-              {data?.appointmentType || "N/A"}
-            </p>
-            <p style={{ paddingTop: "5px" }}>
-              <strong>Description: </strong>
-              {data?.description || "N/A"}
-            </p>
-            <p style={{ paddingTop: "5px" }}>
-              <strong>Fee: </strong>
-              {data?.fee || "N/A"}
-            </p>
-          </div>
-          <div className="report-details-box">
-            <p>
-              <strong>Appointment Date:</strong>{" "}
-              {data?.appointmentPeriod?.date || "N/A"}
-            </p>
-            <p style={{ paddingTop: "5px" }}>
-              <strong>Appointment Time:</strong>{" "}
-              {data?.appointmentPeriod
-                ? `${data.appointmentPeriod.startTime} – ${data.appointmentPeriod.endTime}`
-                : "N/A"}
-            </p>
-          </div>
-*/

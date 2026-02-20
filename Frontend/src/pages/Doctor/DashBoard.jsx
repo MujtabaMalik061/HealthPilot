@@ -19,6 +19,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { IMAGES } from "../../utils/constants";
 import { useNavigate } from "react-router";
+import Loader from "../../components/Loader";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -63,8 +64,6 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
-  console.log("latestBookings----->", latestBookings);
 
   return (
     <div className="page-container">
@@ -138,13 +137,15 @@ const Dashboard = () => {
         />
       </div>
       <SectionCard title="Latest Appointments">
-        {latestBookings?.length > 0 ? (
+        {loading ? (
+          <Loader  style={{minHeight:"450px"}}/>
+        ) : latestBookings?.length > 0 ? (
           <div className="doctor-dashboard-latest-appointments-container">
             {latestBookings?.map((booking, index) => {
               return (
                 <div
                   className="doctor-dashboard-latest-appointments-card"
-                  key={booking?._id}
+                  key={index}
                 >
                   <div className="doctor-dashboard-latest-appointments-card-left">
                     <ProfileImage
@@ -158,7 +159,9 @@ const Dashboard = () => {
                           {booking?.patient?.name || "N/A"}
                         </h2>
 
-                        <span className="doctor-dashboard-latest-appointments-status">
+                        <span
+                          className={`doctor-dashboard-latest-appointments-status ${booking?.status || "N/A"}`}
+                        >
                           {booking?.status || "N/A"}
                         </span>
                       </div>
@@ -179,7 +182,7 @@ const Dashboard = () => {
                     onClick={() =>
                       navigate(`/appointment-details/${booking?._id}`)
                     }
-                    className="doctor-dashboard-latest-appointments-view-button"
+                    className="custom-table-action-btn active"
                   >
                     View Details
                   </button>

@@ -38,13 +38,13 @@
 
 .report-details-box {
   padding: 8px;
-  border: 1px solid rgb(236, 236, 236);
+  border: 1px solid var(--border);
   border-radius: 7px;
   margin-top: 14px;
 }
 
 .report-details-box p {
-  color: #333;
+  color: var(--card-foreground);
   font-size: 16px;
   font-weight: 400;
 }

@@ -28,7 +28,6 @@ import Loader from "../../components/Loader";
 const Appointments = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  // const [status, setStatus] = useState("all");
   const [status, setStatus] = useState("pending");
   const [countLoading, setCountLoading] = useState(true);
   const [countsStates, setCountsStates] = useState([]);
@@ -103,18 +102,28 @@ const Appointments = () => {
       rejectReason: rejectReason,
       cancelledBy: currentUser?._id,
     };
+    setLoadingStatusChange({
+      loadingType: newStatus,
+      loadingFor: id,
+    });
     try {
-      setLoadingStatusChange({
-        loadingType: newStatus,
-        loadingFor: id,
-      });
       await updateAppointmentHelper(id, submitData);
+      const res = await getSingleUserAppointmentsHelper(
+        currentUser?._id,
+        page,
+        limit,
+        status,
+      );
+      setAppointments(res.data);
+      setTotal(res?.meta?.total);
+      setLastPage(res?.meta?.totalPages);
       toast.success("Appountment rejected successfully.");
     } catch (err) {
       console.error("Failed to reject Appointment:", err);
       toast.error("Failed to reject appountment.");
     } finally {
       setLoadingStatusChange(null);
+      setRejectConfirm(null);
     }
   };
 
@@ -131,7 +140,7 @@ const Appointments = () => {
     },
     {
       name: "Status",
-      width: "110px",
+      width: "135px",
       row: (c) => (
         <span
           className={`custom-status custom-status-${
@@ -175,7 +184,7 @@ const Appointments = () => {
             >
               {loadingStatusChange &&
               loadingStatusChange?.loadingType === "approved" &&
-              loadingStatusChange?.loadingFor === c?.id ? (
+              loadingStatusChange?.loadingFor === c?._id ? (
                 <Loader
                   color="#fff"
                   size="20"
@@ -209,7 +218,7 @@ const Appointments = () => {
             >
               {loadingStatusChange &&
               loadingStatusChange?.loadingType === "completed" &&
-              loadingStatusChange?.loadingFor === c?.id ? (
+              loadingStatusChange?.loadingFor === c?._id ? (
                 <Loader
                   color="#fff"
                   size="20"
@@ -217,7 +226,7 @@ const Appointments = () => {
                   style={{ height: "17px" }}
                 />
               ) : (
-                "Approve"
+                "Completed"
               )}
             </button>
           </div>
@@ -238,7 +247,7 @@ const Appointments = () => {
     },
     {
       name: "Status",
-      width: "110px",
+      width: "135px",
       row: (c) => (
         <span
           className={`custom-status custom-status-${
@@ -314,13 +323,6 @@ const Appointments = () => {
         desc="View and manage all appointment history"
       />
       <div className="custom-stats-row">
-        {/* <StatesCard
-          iconBg="#00c29b"
-          title="Total Appointments"
-          value={countsStates?.totalAppointments || 0}
-          icon={UserCheck}
-          loading={countLoading}
-        /> */}
         <StatesCard
           iconBg="rgb(193 198 17)"
           title="Pending Appointments"

@@ -102,7 +102,7 @@ const DoctorDetails = () => {
                   style={{ marginTop: "10px" }}
                   className="doctor-consultation-content"
                 >
-                  <span className="icon">
+                  <span style={{ width: "24px" }} className="icon">
                     <Mail size={16} />
                   </span>
                   <span>{user?.email || "N/A"}</span>
@@ -111,7 +111,7 @@ const DoctorDetails = () => {
                   style={{ marginTop: "10px" }}
                   className="doctor-consultation-content"
                 >
-                  <span className="icon">
+                  <span style={{ width: "24px" }} className="icon">
                     <CalendarClockIcon size={16} />
                   </span>
                   <span>{formateDate(user?.createdAt) || "N/A"}</span>

@@ -171,6 +171,7 @@
 
 .doctor-consultation-content > h2 {
   font-size: 15px;
+  white-space: nowrap;
 }
 
 .doctor-consultation-content > span {

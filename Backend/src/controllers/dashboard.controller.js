@@ -145,7 +145,7 @@ export const getTopDoctors = async (req, res) => {
 
     const doctors = await User.find({
       _id: { $in: doctorIds },
-    }).select("profilImg name email");
+    }).select("profilImg name email specialist");
 
     const result = topDoctors.map((item) => {
       const doctor = doctors.find(

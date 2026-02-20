@@ -8,10 +8,14 @@ const CustomTable = ({
   lastPage = 1,
   page = 1,
   handlePageChange,
+  className = "",
   loading = false,
   loadingHeight = "100%",
   rowClickable = false,
   onRowClick,
+  minWidth = "1000px",
+  pagination = true,
+  style = {},
 }) => {
   const getColumnWidths = (columns) => {
     let usedWidth = 0;
@@ -39,8 +43,8 @@ const CustomTable = ({
 
   return (
     <>
-      <div className="custom-table-wrapper">
-        <table className="custom-table">
+      <div style={style} className={`custom-table-wrapper ${className}`}>
+        <table style={{ minWidth }} className="custom-table">
           <colgroup>
             {finalColumns.map((col, i) => (
               <col key={i} style={{ width: col._calculatedWidth }} />
@@ -100,25 +104,27 @@ const CustomTable = ({
           )}
         </table>
       </div>
-      <div className="custom-table-pagination-container">
-        <span className="custom-table-pagination-content">{show}</span>
-        <div className="custom-table-pagination-actions-container">
-          <button
-            className="custom-table-pagination-btn"
-            disabled={page === 1}
-            onClick={() => handlePageChange(page - 1)}
-          >
-            Previous
-          </button>
-          <button
-            className="custom-table-pagination-btn"
-            disabled={page === lastPage}
-            onClick={() => handlePageChange(page + 1)}
-          >
-            Next
-          </button>
+      {pagination && (
+        <div className="custom-table-pagination-container">
+          <span className="custom-table-pagination-content">{show}</span>
+          <div className="custom-table-pagination-actions-container">
+            <button
+              className="custom-table-pagination-btn"
+              disabled={page === 1}
+              onClick={() => handlePageChange(page - 1)}
+            >
+              Previous
+            </button>
+            <button
+              className="custom-table-pagination-btn"
+              disabled={page === lastPage}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              Next
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

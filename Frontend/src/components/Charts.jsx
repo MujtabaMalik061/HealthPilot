@@ -67,7 +67,8 @@ export const DoubleAreaChart = ({ Data }) => {
           contentStyle={{
             fontWeight: 600,
             borderRadius: 8,
-            border: "1px solid #00000011",
+            background: "var(--card)",
+            border: "1px solid var(--border)",
             boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
           }}
         />
@@ -122,7 +123,8 @@ export const SingleAreaChart = ({ Data }) => {
           contentStyle={{
             fontWeight: 600,
             borderRadius: 12,
-            border: "1px solid #00000011",
+            background: "var(--card)",
+            border: "1px solid var(--border)",
             boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
           }}
         />
@@ -153,9 +155,11 @@ export const DoubleBarChart = ({ Data }) => {
         <YAxis tick={{ fill: "#6B7280" }} />
 
         <Tooltip
+          cursor={{ fill: "rgba(16, 185, 129, 0.15)" }}
           contentStyle={{
             borderRadius: 8,
-            border: "1px solid #E5E7EB",
+            background: "var(--card)",
+            border: "1px solid var(--border)",
             boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
             fontWeight: 600,
           }}
@@ -179,7 +183,7 @@ export const DoubleBarChart = ({ Data }) => {
         <Bar
           dataKey="appointments"
           name="appointments"
-          fill="#1F9D84"
+          fill="var(--primary)"
           radius={[6, 6, 0, 0]}
           barSize={25}
         />
@@ -187,7 +191,7 @@ export const DoubleBarChart = ({ Data }) => {
         <Bar
           dataKey="completed"
           name="completed"
-          fill="#43C59E"
+          fill="var(--status-approved)"
           radius={[6, 6, 0, 0]}
           barSize={25}
         />

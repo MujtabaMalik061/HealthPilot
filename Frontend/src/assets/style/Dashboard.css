@@ -2,9 +2,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 40px;
+  gap: 20px;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .dashboard-chart-card {
@@ -22,7 +22,7 @@
 .chart-content-cotainer {
   width: 100%;
   height: 100%;
-  background-color: rgb(255, 255, 255);
+  background-color:var(--card);
   padding: 30px 10px 10px 10px;
   margin-left: -20px;
 }
@@ -38,6 +38,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 18px;
   width: 100%;
 }
 
@@ -47,8 +48,8 @@
   justify-content: space-between;
   border: 1px solid var(--border);
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 14px 10px;
+  border-radius: 8px;
 }
 
 .doctor-dashboard-latest-appointments-card-left {
@@ -60,4 +61,117 @@
 .doctor-dashboard-latest-appointments-profile-image {
   height: 60px;
   width: 60px;
+}
+
+.doctor-dashboard-latest-appointments-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doctor-dashboard-latest-appointments-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.doctor-dashboard-latest-appointments-patient-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.doctor-dashboard-latest-appointments-status {
+  font-size: 10px;
+  font-weight: 500;
+  color: #fff;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 10px;
+}
+
+.doctor-dashboard-latest-appointments-status.pending {
+  background: var(--status-pending);
+}
+
+.doctor-dashboard-latest-appointments-status.approved {
+  background: var(--status-approved);
+}
+
+.doctor-dashboard-latest-appointments-status.rejected {
+  background: var(--status-rejected);
+}
+
+.doctor-dashboard-latest-appointments-status.completed {
+  background: var(--status-approved);
+}
+
+.doctor-dashboard-latest-appointments-type-fee,
+.doctor-dashboard-latest-appointments-date-time {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.dashboard-top-doctor-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  transition: 0.3s;
+}
+
+.dashboard-top-doctor-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.dashboard-top-doctor-rank {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--primary-hover);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-top-doctor-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dashboard-top-doctor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-top-doctor-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--card-foreground);
+}
+
+.dashboard-top-doctor-count {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--card-foreground);
+}
+
+.dashboard-top-doctor-speciality {
+  font-size: 15px;
+  color: var(--muted-foreground);
+}
+
+.dashboard-top-doctor-label {
+  font-size: 15px;
+  color: var(--muted-foreground);
 }

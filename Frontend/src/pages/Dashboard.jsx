@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Activity, Stethoscope, Users, Calendar } from "lucide-react";
+import {
+  Activity,
+  Stethoscope,
+  Users,
+  Calendar,
+  TrendingUp,
+} from "lucide-react";
 import "../assets/style/Dashboard.css";
-import { Header, DashBoardStatesCard } from "../components/CustomComponents";
+import {
+  Header,
+  DashBoardStatesCard,
+} from "../components/CustomComponents";
 import {
   getAdminCountesStatesHelper,
   getUserGrowthTrendsHelper,
@@ -14,6 +23,8 @@ import {
   DoubleAreaChart,
   DoubleBarChart,
 } from "../components/Charts";
+import Loader from "../components/Loader";
+import CustomTable from "../components/CustomTable";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -57,11 +68,43 @@ const Dashboard = () => {
     }
   };
 
-  console.log("stateCounts----->", stateCounts);
-  console.log("userGrowth----->", userGrowth);
-  console.log("weeklyAppointments----->", weeklyAppointments);
-  console.log("latestBookings----->", latestBookings);
-  console.log("topDoctors----->", topDoctors);
+  const bookingsColumns = [
+    {
+      name: "Patient",
+      row: (c) => (
+        <strong className="capital">{c?.patient?.name || "N/A"}</strong>
+      ),
+    },
+    {
+      name: "Doctor",
+      row: (c) => (
+        <>
+          <strong className="capital">{c?.doctor?.name || "N/A"}</strong>
+        </>
+      ),
+    },
+    {
+      name: "Date & Time",
+      row: (c) => (
+        <span>
+          {c?.appointmentPeriod?.date || "N/A"} at{" "}
+          {c?.appointmentPeriod?.startTime || "N/A"}
+        </span>
+      ),
+    },
+    {
+      name: "Status",
+      width: "150px",
+      row: (c) => (
+        <span
+          className={`custom-status custom-status-${c?.status === "pending" ? "pending" : c?.status === "rejected" ? "suspended" : "active"}`}
+        >
+          {c?.status || "N/A"}
+        </span>
+      ),
+    },
+  ];
+
 
   return (
     <div className="page-container">
@@ -123,8 +166,86 @@ const Dashboard = () => {
           loading={loading}
         />
       </div>
+      <div className="dashboard-charts-wrapper">
+        <SectionCard style={{ width: "100%" }} title="Latest Appointments">
+          <CustomTable
+            data={latestBookings}
+            columns={bookingsColumns}
+            loading={loading}
+            loadingHeight="100px"
+            minWidth="700px"
+            pagination={false}
+            style={{ marginTop: "15px" }}
+          />
+        </SectionCard>
+        <SectionCard
+          icon={TrendingUp}
+          style={{ width: "100%", minHeight: "395px" }}
+          title="Top Doctors"
+        >
+          {loading ? (
+            <Loader style={{ minHeight: "330px" }} />
+          ) : topDoctors?.length > 0 ? (
+            <div className="doctor-dashboard-latest-appointments-container">
+              {topDoctors?.map((doctor, index) => {
+                return (
+                  <div className="dashboard-top-doctor-card" key={index}>
+                    {/* Rank */}
+                    <div className="dashboard-top-doctor-rank">{index + 1}</div>
+
+                    {/* Info Section */}
+                    <div className="dashboard-top-doctor-info">
+                      {/* Top Row */}
+                      <div className="dashboard-top-doctor-row">
+                        <span className="dashboard-top-doctor-name">
+                          {doctor?.doctor?.name || "N/A"}
+                        </span>
+
+                        <span className="dashboard-top-doctor-count">
+                          {doctor?.completedAppointments || 0}
+                        </span>
+                      </div>
+
+                      {/* Bottom Row */}
+                      <div className="dashboard-top-doctor-row">
+                        <span className="dashboard-top-doctor-speciality">
+                          {doctor?.doctor?.specialist?.[0] || "N/A"}
+                        </span>
+
+                        <span className="dashboard-top-doctor-label">
+                          appointments
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="no-data-cell">No doctors found.</p>
+          )}
+        </SectionCard>
+      </div>
     </div>
   );
 };
 
 export default Dashboard;
+
+const SectionCard = ({
+  title = "",
+  icon: Icon,
+  margin = "0px 0px 20px 0px",
+  style = {},
+  children,
+}) => {
+  return (
+    <div style={{ margin, ...style }} className="doctor-details-section-card">
+      <div className="doctor-details-section-header">
+        {Icon ? <Icon color="var(--card-foreground)" size={18} /> : null}
+        {title && <h3 className="doctor-details-section-title">{title}</h3>}
+      </div>
+      {children}
+    </div>
+  );
+};

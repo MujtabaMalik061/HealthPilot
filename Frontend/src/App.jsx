@@ -35,6 +35,7 @@ import UserServices from "./pages/Paitent/Services.jsx";
 import PaitentAppointments from "./pages/Paitent/Appointments.jsx";
 import DoctorAppointments from "./pages/Doctor/Appointments.jsx";
 import AppointmentDetails from "./components/DetailsPages/AppointmentDetails.jsx";
+import Reports from "./pages/Doctor/Reports.jsx";
 
 const App = () => {
   return (
@@ -150,14 +151,6 @@ const App = () => {
           />
           {/* ===== User ===== */}
           <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute role={["patient"]}>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
             path="/doctors"
             element={
               <ProtectedRoute role={["patient"]}>
@@ -194,7 +187,7 @@ const App = () => {
             path="/reports"
             element={
               <ProtectedRoute role={["doctor", "patient"]}>
-                <Dashboard />
+                <Reports />
               </ProtectedRoute>
             }
           />

@@ -55,7 +55,7 @@ const NotFound = () => {
               padding: "9px 18px",
               borderRadius: "5px",
               border: "1px solid var(--border)",
-              background: "var(--card)",
+              background: "#fff",
               cursor: "pointer",
             }}
             onClick={() => navigate(-1)}

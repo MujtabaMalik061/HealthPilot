@@ -62,7 +62,7 @@ const ServiceDetails = () => {
                   style={{ marginTop: "8px" }}
                   className="doctor-consultation-content"
                 >
-                  <span className="icon">
+                  <span style={{ width: "24px" }} className="icon">
                     <CalendarDaysIcon size={16} />
                   </span>
                   <span>{formateDate(service?.createdAt) ?? "N/A"}</span>
