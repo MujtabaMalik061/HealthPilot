@@ -1,4 +1,3 @@
-
 .report-details-user {
   display: flex;
   gap: 14px;
@@ -47,4 +46,157 @@
   color: var(--card-foreground);
   font-size: 16px;
   font-weight: 400;
+}
+
+.reports-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.search-report-user {
+  position: relative;
+}
+
+.reports-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.report-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: 0.3s;
+  border: 1px solid var(--border);
+}
+
+.report-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.report-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-type {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #4b5563;
+  text-transform: capitalize;
+}
+
+.report-status {
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.report-status.pending {
+  background: #fff4d6;
+  color: #d97706;
+}
+
+.report-status.resolved {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.report-status.rejected {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.report-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--card-foreground);
+}
+
+.report-description {
+  font-size: 15px;
+  color: var(--muted-foreground);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.report-meta {
+  font-size: 14px;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.report-meta .against {
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+
+.report-meta .dot {
+  margin: 0 6px;
+}
+
+.report-details-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.report-details-action {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.report-details-action:hover {
+  transform: scale(1.02);
+}
+
+.report-details-action.btn-primary {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.report-details-action.btn-primary:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.report-details-action.btn-secondary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.report-details-action.btn-secondary:hover {
+  background: var(--status-approved);
 }

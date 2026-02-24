@@ -8,7 +8,7 @@ export const getReportsHelper = async (
 ) => {
   try {
     const res = await API.get("/api/reports/getReports", {
-      params: { page, limit, search, status }, 
+      params: { page, limit, search, status },
     });
     return res.data;
   } catch (err) {
@@ -41,10 +41,26 @@ export const addReportHelper = async ({
 
 export const updateReportHelper = async (reportId, updateData) => {
   try {
-    const res = await API.put(
+    const res = await API.patch(
       `/api/reports/updateReport/${reportId}`,
       updateData,
     );
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || err;
+  }
+};
+
+export const resolveReportHelper = async ({
+  reportId = null,
+  status = "",
+  adminResponse = "",
+}) => {
+  try {
+    const res = await API.patch(`/api/reports/resolve-report/${reportId}`, {
+      status,
+      adminResponse,
+    });
     return res.data;
   } catch (err) {
     throw err.response?.data || err;
@@ -69,11 +85,15 @@ export const getReportByIdHelper = async (reportId) => {
   }
 };
 
-export const getReportsSingleUserHelper = async (userId, type = "all") => {
+export const getReportsSingleUserHelper = async (
+  userId,
+  type = "all",
+  page = 1,
+  limit = 20,
+) => {
   try {
-    const res = await API.post("/api/reports/getReportsSingleUser", {
-      userId,
-      type,
+    const res = await API.get("/api/reports/getReportsSingleUser", {
+      params: { userId, type, page, limit },
     });
     return res.data;
   } catch (err) {

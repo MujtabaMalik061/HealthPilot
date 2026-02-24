@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from "react";
-import {
-  Header,
-  SearchInput,
-  Tab,
-} from "../components/CustomComponents";
+import { Header, SearchInput, Tab } from "../components/CustomComponents";
 import CustomTable from "../components/CustomTable";
 import {
   getReportsHelper,
   updateReportHelper,
-  deleteReportHelper,
 } from "../services/ReportsHelper";
 import Loader from "../components/Loader";
 import { toast } from "sonner";
 import { timeAgo } from "../utils/Helper";
 import ReportDetailModel from "../components/ReportDetailModel";
+import { limit } from "../utils/constants";
 
 const AdminReports = () => {
   // State
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [limit] = useState(20);
   const [total, setTotal] = useState(0);
   const [lastPage, setLastPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -28,7 +23,6 @@ const AdminReports = () => {
   const [statusLoading, setStatusLoading] = useState(null);
   const [reportDetails, setReportDetails] = useState(null);
 
-  // Fetch reports
   const fetchReports = async (nextPage = 1) => {
     try {
       if (!loading) setLoading(true);
@@ -47,6 +41,11 @@ const AdminReports = () => {
   };
 
   useEffect(() => {
+    setPage(1);
+    setReports([]);
+  }, [status, search]);
+
+  useEffect(() => {
     fetchReports(page);
   }, [page, status, search]);
 
@@ -63,20 +62,6 @@ const AdminReports = () => {
     } catch (err) {
       console.error("Failed to update report status:", err);
       toast.error("Failed to update report status");
-    } finally {
-      setStatusLoading(null);
-    }
-  };
-
-  const handleDelete = async (reportId) => {
-    try {
-      setStatusLoading(reportId);
-      await deleteReportHelper(reportId);
-      toast.success("Report deleted successfully");
-      fetchReports(page);
-    } catch (err) {
-      console.error("Failed to delete report:", err);
-      toast.error("Failed to delete report");
     } finally {
       setStatusLoading(null);
     }
@@ -112,52 +97,62 @@ const AdminReports = () => {
       name: "Created At",
       row: (r) => timeAgo(r.createdAt) || "N/A",
     },
-    // {
-    //   name: "Actions",
-    //   bothClass: "custom-table-action",
-    //   row: (r) =>
-    //     statusLoading === r._id ? (
-    //       <Loader size={12} />
-    //     ) : (
-    //       <EllipsisSelector
-    //         options={[
-    //           {
-    //             label: "View Details",
-    //             icon: Eye,
-    //             action: () => alert(JSON.stringify(r, null, 2)),
-    //           },
-    //           {
-    //             label: "Resolve",
-    //             icon: CircleCheckBig,
-    //             action: () => handleStatusChange(r._id, "resolved"),
-    //           },
-    //           {
-    //             label: "Reject",
-    //             icon: CircleX,
-    //             action: () => handleStatusChange(r._id, "rejected"),
-    //           },
-    //           {
-    //             label: "Delete",
-    //             icon: CircleX,
-    //             action: () => handleDelete(r._id),
-    //           },
-    //         ]}
-    //       />
-    //     ),
-    // },
     {
       name: "Actions",
       bothClass: "custom-table-action",
       row: (r) => (
         <div className="custom-table-action-container">
           <button
+            style={{
+              background: "transparent",
+              border: "1px solid var(--primary)",
+              color: "var(--primary)",
+            }}
             className="custom-table-action-btn inactive"
-            onClick={() => handleDelete(r._id)}
+            onClick={() => setReportDetails(r)}
           >
-            Delete
+            Review
+          </button>
+          <button
+            className="custom-table-action-btn inactive"
+            onClick={() => handleStatusChange(r._id, "rejected")}
+          >
+            {statusLoading === r._id ? "Rejecting..." : "Reject"}
           </button>
         </div>
       ),
+    },
+  ];
+
+  const reportsNonActionColumns = [
+    {
+      name: "Sender",
+      row: (r) => r.sender?.name || "N/A",
+    },
+    {
+      name: "Receiver(s)",
+      row: (r) =>
+        r.receiver?.length > 0
+          ? r.receiver.map((rec) => rec.name).join(", ")
+          : "N/A",
+    },
+    {
+      name: "Type",
+      row: (r) => r.reportType || "N/A",
+    },
+    {
+      name: "Status",
+      row: (r) => (
+        <span
+          className={`custom-status custom-status-${r.status || "pending"}`}
+        >
+          {r.status || "pending"}
+        </span>
+      ),
+    },
+    {
+      name: "Created At",
+      row: (r) => timeAgo(r.createdAt) || "N/A",
     },
   ];
 
@@ -189,7 +184,9 @@ const AdminReports = () => {
         <h3 className="custom-section-title">Pending reports</h3>
         <CustomTable
           data={reports}
-          columns={reportsColumns}
+          columns={
+            status === "pending" ? reportsColumns : reportsNonActionColumns
+          }
           show={`${
             reports?.length > 0
               ? `Showing ${(page - 1) * limit + 1}–${Math.min(
@@ -203,8 +200,12 @@ const AdminReports = () => {
           handlePageChange={handlePageChange}
           loading={loading}
           loadingHeight="500px"
-          rowClickable={true}
-          onRowClick={(rowData) => setReportDetails(rowData)}
+          rowClickable={status === "pending" ? false : true}
+          onRowClick={(report) => {
+            if (status !== "pending") {
+              setReportDetails(report);
+            }
+          }}
         />
       </div>
       {reportDetails && (

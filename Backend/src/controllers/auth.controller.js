@@ -12,7 +12,6 @@ export const signUp = async (req, res) => {
       email,
       password,
       role,
-      // specialist,
       location,
       doctorStartDate,
       certificate,
@@ -34,7 +33,6 @@ export const signUp = async (req, res) => {
     };
 
     if (role === "doctor") {
-      // userData.specialist = specialist ? JSON.parse(specialist) : [];
       userData.location = location;
       userData.doctorStartDate = doctorStartDate;
       userData.certificate = certificate;

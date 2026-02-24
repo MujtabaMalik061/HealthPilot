@@ -342,6 +342,7 @@ export const addAppointment = async (req, res) => {
 export const updateAppointment = async (req, res) => {
   try {
     const { Id } = req.params;
+
     const appointment = await Appointment.findById(Id);
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
@@ -352,6 +353,14 @@ export const updateAppointment = async (req, res) => {
     if (status) appointment.status = status;
     if (rejectReason !== undefined) appointment.rejectReason = rejectReason;
     if (cancelledBy !== undefined) appointment.cancelledBy = cancelledBy;
+
+    if (status === "completed") {
+      const doctor = await User.findById(appointment.doctor);
+      if (doctor && doctor.role === "doctor") {
+        doctor.treatments = (doctor.treatments || 0) + 1;
+        await doctor.save();
+      }
+    }
 
     await appointment.save();
 

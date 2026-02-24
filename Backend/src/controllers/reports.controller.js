@@ -1,4 +1,5 @@
 import Report from "../models/reports.model.js";
+import User from "../models/user.model.js";
 
 export const getReports = async (req, res) => {
   try {
@@ -6,7 +7,7 @@ export const getReports = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
     const search = req.query.search || "";
-    const status = req.query.status; 
+    const status = req.query.status;
 
     const query = {};
 
@@ -50,12 +51,24 @@ export const getReports = async (req, res) => {
 
 export const addReport = async (req, res) => {
   try {
-    const { sender, receiver, reportType, title, description, reported } =
-      req.body;
+    const {
+      sender,
+      receiver = [],
+      reportType,
+      title,
+      description,
+      reported,
+    } = req.body;
+
+    const adminUsers = await User.find({ role: "admin" }).select("_id");
+    const receivers = [
+      ...adminUsers.map((admin) => admin._id),
+      ...(Array.isArray(receiver) ? receiver : [receiver]),
+    ];
 
     const newReport = new Report({
       sender,
-      receiver,
+      receiver: receivers,
       reportType,
       title,
       description,
@@ -98,6 +111,42 @@ export const updateReport = async (req, res) => {
   } catch (err) {
     console.error("Error updating report:", err);
     res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const resolveReport = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, adminResponse } = req.body;
+
+    const allowedStatus = ["resolved", "rejected"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status value",
+      });
+    }
+
+    const report = await Report.findById(id);
+    if (!report) {
+      return res.status(404).json({
+        message: "Report not found",
+      });
+    }
+
+    report.status = status;
+    report.adminResponse = adminResponse || "";
+
+    await report.save();
+
+    return res.status(200).json({
+      message: `Report ${status} successfully`,
+      report,
+    });
+  } catch (error) {
+    console.error("Resolve Report Error:", error);
+    return res.status(500).json({
+      message: "Something went wrong while resolving report",
+    });
   }
 };
 
@@ -145,11 +194,17 @@ export const getReportById = async (req, res) => {
 
 export const getReportsSingleUser = async (req, res) => {
   try {
-    const { userId, type } = req.body;
-    if (!userId || !type) {
-      return res
-        .status(400)
-        .json({ success: false, message: "userId and type are required" });
+    const { userId, type = "all" } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "userId is required",
+      });
     }
 
     let query;
@@ -178,11 +233,22 @@ export const getReportsSingleUser = async (req, res) => {
       .populate("sender", "name profilImg email role")
       .populate("receiver", "name profilImg email role")
       .populate("reported", "name profilImg email role")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res
-      .status(200)
-      .json({ success: true, count: reports.length, data: reports });
+    const total = await Report.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      data: reports,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.error("Error fetching single user reports:", err);
     res.status(500).json({ success: false, message: err.message });

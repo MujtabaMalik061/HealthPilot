@@ -161,6 +161,7 @@ export const Selector = ({
   setFilter,
   options,
   style = {},
+  width = "",
   margin = "",
   position = "right",
 }) => {
@@ -197,7 +198,7 @@ export const Selector = ({
       ref={selectorRef}
       onClick={() => setIsFilterOpen(!isFilterOpen)}
       disabled={disabled}
-      style={{ margin, ...style }}
+      style={{ width, margin, ...style }}
       className={`customs-filter-container ${disabled ? "disabled" : ""}`}
     >
       <div className="customs-filter-selector">
@@ -208,6 +209,7 @@ export const Selector = ({
       </div>
       {isFilterOpen && (
         <div
+          style={{ width }}
           className={`customs-filter-selection-container ${
             position === "left" ? "customs-filter-selection-container-left" : ""
           }`}
@@ -285,7 +287,7 @@ export const EllipsisSelector = ({ options, position = "right" }) => {
                 }}
                 className="ellipsisSelector-filter-item"
               >
-                <Icon size={13} />
+                {Icon && <Icon size={13} />}
                 {option.label}
               </button>
             );

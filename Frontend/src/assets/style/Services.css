@@ -41,6 +41,7 @@
 
 .add-services-action-btn.cencel {
   border: 1px solid var(--border);
+  color: var(--card-foreground);
 }
 
 .add-services-action-btn.confirm {

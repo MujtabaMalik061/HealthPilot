@@ -29,6 +29,10 @@ const reportSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    adminResponse: {
+      type: String,
+      trim: true,
+    },
     status: {
       type: String,
       enum: ["pending", "resolved", "rejected"],
