@@ -154,7 +154,7 @@ const AdminUsers = () => {
     {
       name: "Total bookings",
       bothStyle: { textAlign: "center" },
-      row: (c) => c?.booked?.length || 0,
+      row: (c) => c?.appointmentCount || 0,
     },
     {
       name: "Joined At",
@@ -199,6 +199,7 @@ const AdminUsers = () => {
       ),
     },
   ];
+  
 
   return (
     <div className="page-container">

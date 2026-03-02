@@ -86,9 +86,7 @@ const AdminReports = () => {
     {
       name: "Status",
       row: (r) => (
-        <span
-          className={`custom-status custom-status-${r.status || "pending"}`}
-        >
+        <span className={`report-status ${r?.status}`}>
           {r.status || "pending"}
         </span>
       ),
@@ -144,9 +142,9 @@ const AdminReports = () => {
       name: "Status",
       row: (r) => (
         <span
-          className={`custom-status custom-status-${r.status || "pending"}`}
+          className={`report-status ${r?.status}`}
         >
-          {r.status || "pending"}
+          {r?.status || "N/A"}
         </span>
       ),
     },

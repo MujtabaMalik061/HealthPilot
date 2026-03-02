@@ -385,10 +385,10 @@
   gap: 6px;
 }
 
-.custom-service-link > span{
+.custom-service-link > span {
   transition: 0.3s;
 }
-.custom-service-link:hover > span{
+.custom-service-link:hover > span {
   transform: translateX(2px);
 }
 
@@ -966,4 +966,74 @@
 
 .custom-details-page-back-btn > button:hover > .icon {
   transform: translateX(-2px);
+}
+
+/* ============ Review Card Style ============ */
+.custom-review-container {
+  background: #fff;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.custom-review-container-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.custom-review-container-header > h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.custom-review-container-header > span > small {
+  font-size: 12px;
+  color: #475467;
+}
+
+.custom-review-container-body {
+  padding: 15px;
+}
+
+.custom-review-card {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #f2f4f7;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 12px 8px;
+}
+
+.custom-review-profileImage {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.custom-review-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.custom-review-card > div > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-review-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }

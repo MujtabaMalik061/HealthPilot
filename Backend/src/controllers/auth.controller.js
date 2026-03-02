@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import Service from "../models/service.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/jwt.js";
+import mongoose from "mongoose";
 
 export const signUp = async (req, res) => {
   try {

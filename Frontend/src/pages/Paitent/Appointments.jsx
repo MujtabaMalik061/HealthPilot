@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Header,
-  StatesCard,
-  Tab,
-} from "../../components/CustomComponents";
+import { Header, StatesCard, Tab } from "../../components/CustomComponents";
 import {
   ClipboardCheck,
   ClipboardClock,
@@ -43,7 +39,7 @@ const Appointments = () => {
   }, [currentUser]);
 
   useEffect(() => {
-    getAppointments(page);
+    getAppointments(1);
   }, [status]);
 
   useEffect(() => {
@@ -73,6 +69,7 @@ const Appointments = () => {
         limit,
         status,
       );
+      if (page !== nextPage) return setPage(nextPage);
       setAppointments(res.data);
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
@@ -182,7 +179,6 @@ const Appointments = () => {
     },
   ];
 
-
   return (
     <div className="page-container">
       <Header
@@ -226,17 +222,17 @@ const Appointments = () => {
           loading={countLoading}
         />
       </div>
-        <Tab
-          activeTab={status}
-          setActiveTab={setStatus}
-          tabs={[
-            { label: "All", filter: "all" },
-            { label: "Pending", filter: "pending" },
-            { label: "Approved", filter: "approved" },
-            { label: "Rejected", filter: "rejected" },
-            { label: "Completed", filter: "completed" },
-          ]}
-        />
+      <Tab
+        activeTab={status}
+        setActiveTab={setStatus}
+        tabs={[
+          { label: "All", filter: "all" },
+          { label: "Pending", filter: "pending" },
+          { label: "Approved", filter: "approved" },
+          { label: "Rejected", filter: "rejected" },
+          { label: "Completed", filter: "completed" },
+        ]}
+      />
       <div className="custom-table-card">
         <h3 className="custom-section-title">All Appointments</h3>
         <CustomTable

@@ -41,7 +41,7 @@ const Doctors = () => {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      getDoctors(page);
+      getDoctors(1);
     }, 400);
     return () => clearTimeout(delay);
   }, [search, specialtiesFilter]);
@@ -69,6 +69,7 @@ const Doctors = () => {
       } else {
         setDoctors((prev) => [...(prev ?? []), ...(res?.data ?? [])]);
       }
+      if(page !== nextPage) return setPage(nextPage);
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
     } catch (err) {
@@ -127,7 +128,7 @@ const Doctors = () => {
           disabled={loading}
           filter={specialtiesFilter}
           setFilter={setSpecialtiesFilter}
-          position="left"
+          // position="left"
           options={[
             { label: "All Specialties", filter: "All Specialties" },
             ...(specialties?.length > 0

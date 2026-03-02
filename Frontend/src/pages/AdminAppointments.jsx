@@ -44,7 +44,7 @@ const AdminAppointments = () => {
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      getAppointments(page);
+      getAppointments(1);
     }, 400);
     return () => clearTimeout(delay);
   }, [search, status]);
@@ -75,6 +75,7 @@ const AdminAppointments = () => {
         search,
         status,
       );
+      if(page !== nextPage) return setPage(nextPage)
       setAppointments(res.data);
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);

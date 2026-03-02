@@ -794,31 +794,6 @@ export const ImageViewModel = ({ Image = "", onClose }) => {
   );
 };
 
-// export const GoBackBtn = ({ title = "", onBack }) => {
-//   const navigate = useNavigate();
-
-//   return (
-//     <div className="custom-details-page-back-btn">
-//       <button
-//         onClick={() => {
-//           if (typeof onBack === "number") {
-//             navigate(onBack);
-//           } else if (typeof onBack === "function") {
-//             onBack();
-//           } else {
-//             navigate(onBack);
-//           }
-//         }}
-//       >
-//         <span className="icon">
-//           <ArrowLeft />
-//         </span>
-//         <p>{title}</p>
-//       </button>
-//     </div>
-//   );
-// };
-
 export const GoBackBtn = () => {
   const navigate = useNavigate();
 
@@ -830,6 +805,171 @@ export const GoBackBtn = () => {
         </span>
         Go Back
       </button>
+    </div>
+  );
+};
+
+export const RatingStars = ({
+  size = 16,
+  value = null,
+  setValue = null,
+  isChngeAble = false,
+  style = {},
+}) => {
+  const handleValueChange = (ratingValue = 0) => {
+    if (!ratingValue || !isChngeAble) return;
+    setValue(ratingValue);
+  };
+
+  return (
+    <span style={{ display: "inline-flex", gap: 2, fontSize: "0px", ...style }}>
+      {Array.from({ length: 5 }, (_, index) => {
+        const starValue = index + 1;
+
+        if (value >= starValue) {
+          return (
+            <Star
+              onClick={() => {
+                handleValueChange(starValue);
+              }}
+              style={{ cursor: isChngeAble ? "pointer" : "default" }}
+              key={index}
+              size={size}
+              color="#FDC700"
+              fill="#FDC700"
+            />
+          );
+        }
+
+        if (value >= starValue - 0.5) {
+          return (
+            <span
+              key={index}
+              style={{
+                position: "relative",
+                display: "inline-block",
+                width: size,
+                height: size,
+              }}
+            >
+              <Star
+                size={size}
+                onClick={() => {
+                  handleValueChange(starValue);
+                }}
+                color="#FDC700"
+                fill="#8f8f8f12"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  cursor: isChngeAble ? "pointer" : "default",
+                }}
+              />
+              <span
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "50%",
+                  height: "100%",
+                  overflow: "hidden",
+                }}
+              >
+                <Star
+                  onClick={() => {
+                    handleValueChange(starValue);
+                  }}
+                  style={{ cursor: isChngeAble ? "pointer" : "default" }}
+                  size={size}
+                  color="#FDC700"
+                  fill="#FDC700"
+                />
+              </span>
+            </span>
+          );
+        }
+
+        return (
+          <Star
+            key={index}
+            onClick={() => {
+              handleValueChange(starValue);
+            }}
+            style={{ cursor: isChngeAble ? "pointer" : "default" }}
+            size={size}
+            color="#FDC700"
+            fill="#00000012"
+          />
+        );
+      })}
+    </span>
+  );
+};
+
+export const ReviewCard = ({
+  profile_Image,
+  name,
+  description,
+  rating,
+  date,
+}) => (
+  <div className="custom-review-card">
+    <div>
+      <div>
+        <ProfileImage
+          Image={profile_Image || IMAGES.PlaceHolder}
+          className="custom-review-profileImage"
+        />
+        <div className="custom-review-card-info">
+          <strong>{name}</strong>
+          <RatingStars value={rating} size={"clamp(12px, 2vw, 16px)"} />
+        </div>
+      </div>
+      <p>{description}</p>
+    </div>
+    <div className="custom-review-card-meta">
+      <small>{date}</small>
+    </div>
+  </div>
+);
+
+export const ReviewSection = ({ reviews, global, meta }) => {
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [lastPage, setLastPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <div className="custom-review-container">
+      <div className="custom-review-container-header">
+        <h4>
+          <span className="icon">
+            <Star size={18} color="#EDBA1D" />
+          </span>
+          Reviews & Ratings
+        </h4>
+        <span>
+          <Star size={14} color="#EDBA1D" fill="#EDBA1D" />{" "}
+          {global?.totalRating || 0}{" "}
+          <small>({global?.totalReviews || 0} reviews)</small>
+        </span>
+      </div>
+      <div className="custom-review-container-body">
+        {loadingReview ? (
+          <Loader />
+        ) : reviewDetails ? (
+          <ReviewCard
+            profile_Image={reviewDetails?.sender?.profilImg}
+            name={reviewDetails?.sender?.name || "N/A"}
+            description={reviewDetails?.review || "N/A"}
+            rating={reviewDetails?.rating || 0}
+            date={formateDate(reviewDetails?.createdAt) || "N/A"}
+          />
+        ) : (
+          <div className="empty-data">Review not found.</div>
+        )}
+      </div>
     </div>
   );
 };

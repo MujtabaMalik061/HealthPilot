@@ -57,18 +57,18 @@ export const getUsersByType = async (req, res) => {
       });
     }
 
-    const query = { role };
+    const matchQuery = { role };
 
     if (status && status !== "all") {
       if (status === "viewed") {
-        query.status = { $ne: "pending" };
+        matchQuery.status = { $ne: "pending" };
       } else {
-        query.status = status;
+        matchQuery.status = status;
       }
     }
 
     if (search) {
-      query.$or = [
+      matchQuery.$or = [
         { name: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
@@ -76,16 +76,43 @@ export const getUsersByType = async (req, res) => {
     }
 
     if (specialist) {
-      query.specialist = { $in: [new RegExp(specialist, "i")] };
+      matchQuery.specialist = { $in: [new RegExp(specialist, "i")] };
     }
 
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select("-password");
+    // 👇 Decide which field to match in appointments
+    const appointmentField = role === "doctor" ? "doctor" : "patient";
 
-    const total = await User.countDocuments(query);
+    const users = await User.aggregate([
+      { $match: matchQuery },
+
+      {
+        $lookup: {
+          from: "appointments", // collection name
+          localField: "_id",
+          foreignField: appointmentField,
+          as: "appointments",
+        },
+      },
+
+      {
+        $addFields: {
+          appointmentCount: { $size: "$appointments" },
+        },
+      },
+
+      {
+        $project: {
+          password: 0,
+          appointments: 0, // remove full appointments array
+        },
+      },
+
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    const total = await User.countDocuments(matchQuery);
     const totalPages = Math.ceil(total / limit);
 
     res.status(200).json({
@@ -152,7 +179,7 @@ export const userCountStates = async (req, res) => {
       return res.status(400).json({ message: "Role is required" });
     }
 
-    const filter = { role }; 
+    const filter = { role };
 
     const totalUsers = await User.countDocuments(filter);
     const pendingUsers = await User.countDocuments({

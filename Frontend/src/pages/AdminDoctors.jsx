@@ -20,12 +20,21 @@ import {
 import { getServicesHelper } from "../services/AdminServices";
 import { getDoctorExperince, timeAgo } from "../utils/Helper";
 import Loader from "../components/Loader";
-import { CircleCheckBig, CircleX, Eye, Image, UserCheck, UserCog, Users, XCircle } from "lucide-react";
+import {
+  CircleCheckBig,
+  CircleX,
+  Eye,
+  Image,
+  UserCheck,
+  UserCog,
+  Users,
+  XCircle,
+} from "lucide-react";
 import { toast } from "sonner";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const AdminDoctors = () => {
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   // counts
   const [countLoading, setCountLoading] = useState(true);
   const [countsStates, setCountStates] = useState([]);
@@ -65,13 +74,12 @@ const AdminDoctors = () => {
     setSearch("");
     setSpecialtiesFilter("All Specialties");
     setDoctors([]);
-    setPage(1);
     setTotal(0);
   }, [tab]);
 
   useEffect(() => {
     const delay = setTimeout(() => {
-      getDoctors(page);
+      getDoctors(1);
     }, 400);
     return () => clearTimeout(delay);
   }, [tab, search, specialtiesFilter]);
@@ -82,7 +90,7 @@ const AdminDoctors = () => {
 
   const getDoctors = async (nextPage = 1) => {
     try {
-      if(!loading){
+      if (!loading) {
         setLoading(true);
       }
       const specialist =
@@ -96,6 +104,7 @@ const AdminDoctors = () => {
         specialist,
         tab === "all" ? "viewed" : "pending",
       );
+      if (page !== nextPage) return setPage(nextPage);
       setDoctors(res.data);
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
@@ -248,10 +257,7 @@ const AdminDoctors = () => {
               {
                 label: "View Details",
                 icon: Eye,
-                action: () =>
-                  navigate(
-                    `/admin/doctor-details/${c._id}`,
-                  ),
+                action: () => navigate(`/admin/doctor-details/${c._id}`),
               },
               c?.status === "approved"
                 ? {
@@ -354,7 +360,6 @@ const AdminDoctors = () => {
       ),
     },
   ];
-
 
   return (
     <div className="page-container">

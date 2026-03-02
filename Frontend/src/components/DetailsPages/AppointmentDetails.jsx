@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { formateDate } from "../../utils/Helper";
 import { useNavigate, useParams } from "react-router-dom";
-import { GoBackBtn, ProfileImage } from "../CustomComponents";
+import { GoBackBtn, ProfileImage, ReviewCard } from "../CustomComponents";
 import Loader from "../Loader";
 import { IMAGES } from "../../utils/constants";
 import { getAppointmentByIdHelper } from "../../services/AppointmentsServices";
 import { useAuth } from "../../context/AuthContext";
+import ReviewDoctor from "../../pages/Paitent/ReviewDoctor";
+import { Star } from "lucide-react";
+import { getReviewByIdHelper } from "../../services/ReviewServices";
 
 const SectionCard = ({
   title = "",
@@ -38,6 +41,25 @@ const AppointmentDetails = () => {
   const { appointmentId } = useParams();
   const [loading, setLoading] = useState(true);
   const [appointment, setAppointment] = useState(null);
+  const [isReviewModel, setIsReviewModel] = useState(false);
+  const [loadingReview, setLoadingReview] = useState(true);
+  const [reviewDetails, setReviewDetails] = useState(null);
+
+  useEffect(() => {
+    if (
+      appointment?.status === "completed" &&
+      currentUser?._id === appointment?.patient?._id &&
+      !appointment?.review
+    ) {
+      setLoadingReview(false);
+      setIsReviewModel(true);
+    } else if (appointment?.review) {
+      setIsReviewModel(false);
+      fetchReviewDetails(appointment?.review);
+    } else {
+      setIsReviewModel(false);
+    }
+  }, [appointment]);
 
   useEffect(() => {
     if (appointmentId) fetchAppointment(appointmentId);
@@ -55,6 +77,17 @@ const AppointmentDetails = () => {
     }
   };
 
+  const fetchReviewDetails = async (reviewId) => {
+    try {
+      const res = await getReviewByIdHelper(reviewId);
+      setReviewDetails(res?.data);
+    } catch (err) {
+      console.error("Failed to load review details:", err?.resonse);
+    } finally {
+      setLoadingReview(false);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -69,6 +102,11 @@ const AppointmentDetails = () => {
   } else if (appointment?.cancelledBy === appointment?.doctor?._id) {
     rejectedBy = appointment?.doctor;
   }
+
+  const reviewData = {
+    reciver: appointment?.doctor?._id,
+    appointment: appointment?._id,
+  };
 
   return (
     <div className="page-container">
@@ -190,9 +228,7 @@ const AppointmentDetails = () => {
                 <button
                   className="appoint-book-submit-btn"
                   onClick={() =>
-                    navigate(
-                      `/admin/user-details/${appointment?.patient?._id}`,
-                    )
+                    navigate(`/admin/user-details/${appointment?.patient?._id}`)
                   }
                 >
                   View Details
@@ -202,6 +238,16 @@ const AppointmentDetails = () => {
           </SectionCard>
         </div>
       </div>
+     
+      {isReviewModel && (
+        <ReviewDoctor
+          data={reviewData}
+          AfterAdd={fetchAppointment}
+          onClose={() => {
+            setIsReviewModel(false);
+          }}
+        />
+      )}
     </div>
   );
 };

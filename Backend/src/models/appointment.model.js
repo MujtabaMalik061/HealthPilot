@@ -41,6 +41,10 @@ const appointmentSchema = new Schema(
       type: String,
       default: "",
     },
+    review: {
+      type: Schema.Types.ObjectId,
+      ref: "Review",
+    },
     cancelledBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

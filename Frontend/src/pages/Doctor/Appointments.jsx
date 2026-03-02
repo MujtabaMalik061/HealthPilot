@@ -48,7 +48,7 @@ const Appointments = () => {
   }, [currentUser]);
 
   useEffect(() => {
-    getAppointments(page);
+    getAppointments(1);
   }, [status]);
 
   useEffect(() => {
@@ -78,6 +78,7 @@ const Appointments = () => {
         limit,
         status,
       );
+      if(page !== nextPage) return setPage(nextPage)
       setAppointments(res.data);
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
