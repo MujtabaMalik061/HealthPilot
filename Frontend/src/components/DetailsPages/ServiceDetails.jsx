@@ -44,6 +44,8 @@ const ServiceDetails = () => {
 
   const Icon = LucideIcons[service.icon];
 
+  const doctorDetails = false;
+
   return (
     <div className="page-container">
       <GoBackBtn title="Back to All Services" onBack="/admin/services" />
@@ -95,7 +97,8 @@ const ServiceDetails = () => {
                     treatments={doctor?.treatments || 0}
                     price={doctor?.price || 0}
                     available={doctorAvailabilty}
-                    isDetails={currentUser?.role === "admin" ? false : true}
+                    adminDoctorDetails={true}
+                    isBookNow={currentUser?.role === "admin" ? false : true}
                   />
                 );
               })}

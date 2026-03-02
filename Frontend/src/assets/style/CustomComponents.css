@@ -970,8 +970,8 @@
 
 /* ============ Review Card Style ============ */
 .custom-review-container {
-  background: #fff;
-  border: 1px solid #e4e7ec;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   margin-top: 20px;
 }
@@ -981,7 +981,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 10px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .custom-review-container-header > h4 {
@@ -989,9 +989,10 @@
   align-items: center;
   gap: 8px;
 }
+
 .custom-review-container-header > span > small {
   font-size: 12px;
-  color: #475467;
+  color: var(--muted-foreground);
 }
 
 .custom-review-container-body {
@@ -1001,7 +1002,7 @@
 .custom-review-card {
   display: flex;
   justify-content: space-between;
-  border: 1px solid #f2f4f7;
+  border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 10px;
   padding: 12px 8px;

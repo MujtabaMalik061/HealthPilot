@@ -5,20 +5,14 @@ import {
   getUserById,
 } from "../../utils/Helper";
 import { useParams } from "react-router-dom";
-import { GoBackBtn, ProfileImage } from "../CustomComponents";
+import { GoBackBtn, ProfileImage, ReviewSection } from "../CustomComponents";
 import "../../assets/style/DoctorDetails.css";
 import Loader from "../Loader";
-import { IMAGES } from "../../utils/constants";
+import { IMAGES, limit } from "../../utils/constants";
 import { updateUserStatusHelper } from "../../services/UsersHelper";
 import { toast } from "sonner";
-import {
-  Award,
-  Clock,
-  MapPin,
-  Star,
-  Users,
-  UserStar,
-} from "lucide-react";
+import { Award, Clock, MapPin, Star, Users, UserStar } from "lucide-react";
+import { getSingleUserReviewsHelper } from "../../services/ReviewServices";
 
 const SectionCard = ({
   title = "",
@@ -73,10 +67,18 @@ const DoctorDetails = () => {
   const [loading, setLoading] = useState(true);
   const [statusLoading, setStatusLoading] = useState(false);
   const [doctor, setDoctor] = useState(null);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [loadMoreReviewsLoading, setLoadMoreReviewsLoading] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-  if (doctorId) fetchDoctor(doctorId);
-  else setLoading(false);
+    if (doctorId) {
+      fetchDoctor(doctorId);
+      fetchReviews(doctorId, 1);
+    } else {
+      setLoading(false);
+      setLoadingReviews(false);
+    }
   }, [doctorId]);
 
   const fetchDoctor = async (id) => {
@@ -88,6 +90,29 @@ const DoctorDetails = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchReviews = async (id, reviewPage) => {
+    try {
+      if (reviewPage === 1) setLoadingReviews(true);
+      else setLoadMoreReviewsLoading(true);
+      const res = await getSingleUserReviewsHelper?.(
+        id,
+        "reciver",
+        reviewPage,
+        limit,
+      );
+      setReviews(res ?? null);
+    } catch (err) {
+      console.error("Failed to fetch doctor:", err);
+    } finally {
+      setLoadingReviews(false);
+      setLoadMoreReviewsLoading(false);
+    }
+  };
+
+  const handleLoadMoreReviews = async (nextPage) => {
+    fetchReviews(doctorId, nextPage);
   };
 
   const handleStatusChange = async (newStatus) => {
@@ -111,171 +136,183 @@ const DoctorDetails = () => {
       </>
     );
   }
-
+  
 
   return (
     <div className="page-container">
       <GoBackBtn title="Back to All Doctors" onBack="/admin/doctors" />
       {doctor ? (
-        <div className="doctor-details-wrapper">
-          <div className="doctor-details-left">
-            <SectionCard>
-              <div className="doctor-details-header">
-                <ProfileImage
-                  Image={doctor?.profilImg || IMAGES.PlaceHolder}
-                  className="doctor-details-avatar"
-                />
+        <>
+          <div className="doctor-details-wrapper">
+            <div className="doctor-details-left">
+              <SectionCard>
+                <div className="doctor-details-header">
+                  <ProfileImage
+                    Image={doctor?.profilImg || IMAGES.PlaceHolder}
+                    className="doctor-details-avatar"
+                  />
 
-                <div className="doctor-details-main-info">
-                  <div className="doctor-details-name">
-                    <h2>{doctor?.name ?? "No Name"}</h2>{" "}
-                    <span
-                      className={`doctor-details-status ${
-                        doctor?.status === "approved" ? "active" : "inactive"
-                      }`}
-                    >
-                      {doctor?.status === "approved" ? "Approved" : "Rejected"}
-                    </span>
-                  </div>
-                  <p className="doctor-details-specialist">
-                    {doctor?.specialist?.join?.(", ") ?? "No Specialist"}
-                  </p>
-                  <div className="doctor-details-meta">
-                    <span
-                      style={{
-                        color: "var(--card-foreground)",
-                        fontSize: "14px",
-                      }}
-                    >
-                      <span className="icon">
-                        <Star size={16} color="#e7b008" fill="#e7b008" />
+                  <div className="doctor-details-main-info">
+                    <div className="doctor-details-name">
+                      <h2>{doctor?.name ?? "No Name"}</h2>{" "}
+                      <span
+                        className={`doctor-details-status ${
+                          doctor?.status === "approved" ? "active" : "inactive"
+                        }`}
+                      >
+                        {doctor?.status === "approved"
+                          ? "Approved"
+                          : "Rejected"}
                       </span>
-                      <span>
-                        {doctor?.rating ?? 0}
-                        <span
-                          style={{
-                            color: "var(--muted-foreground)",
-                            marginLeft: "2px",
-                          }}
-                        >
-                          ({doctor?.reviews ?? 0} reviews)
+                    </div>
+                    <p className="doctor-details-specialist">
+                      {doctor?.specialist?.join?.(", ") ?? "No Specialist"}
+                    </p>
+                    <div className="doctor-details-meta">
+                      <span
+                        style={{
+                          color: "var(--card-foreground)",
+                          fontSize: "14px",
+                        }}
+                      >
+                        <span className="icon">
+                          <Star size={16} color="#e7b008" fill="#e7b008" />
+                        </span>
+                        <span>
+                          {reviews?.global?.totalRating ?? 0}
+                          <span
+                            style={{
+                              color: "var(--muted-foreground)",
+                              marginLeft: "2px",
+                            }}
+                          >
+                            ({reviews?.global?.totalReviews ?? 0} reviews)
+                          </span>
                         </span>
                       </span>
-                    </span>
-                    <span>
-                      <span className="icon">
-                        <MapPin size={14} />
+                      <span>
+                        <span className="icon">
+                          <MapPin size={14} />
+                        </span>
+                        {doctor?.location ?? "No Location"}
                       </span>
-                      {doctor?.location ?? "No Location"}
-                    </span>
+                    </div>
                   </div>
+                  <button
+                    style={{ marginLeft: "auto" }}
+                    className={`custom-table-action-btn ${doctor?.status === "approved" ? "inactive" : "active"}`}
+                    disabled={statusLoading}
+                    onClick={() =>
+                      handleStatusChange(
+                        doctor?.status === "approved" ? "rejected" : "approved",
+                      )
+                    }
+                  >
+                    {statusLoading ? (
+                      <Loader
+                        size="12"
+                        stroke="2"
+                        color="#fff"
+                        style={{ height: "16px" }}
+                      />
+                    ) : doctor?.status === "approved" ? (
+                      "Reject"
+                    ) : (
+                      "Approve"
+                    )}
+                  </button>
                 </div>
-                <button
-                  style={{ marginLeft: "auto" }}
-                  className={`custom-table-action-btn ${doctor?.status === "approved" ? "inactive" : "active"}`}
-                  disabled={statusLoading}
-                  onClick={() =>
-                    handleStatusChange(
-                      doctor?.status === "approved" ? "rejected" : "approved",
-                    )
-                  }
-                >
-                  {statusLoading ? (
-                    <Loader
-                      size="12"
-                      stroke="2"
-                      color="#fff"
-                      style={{ height: "16px" }}
-                    />
-                  ) : doctor?.status === "approved" ? (
-                    "Reject"
-                  ) : (
-                    "Approve"
-                  )}
-                </button>
+
+                <p className="doctor-details-description">
+                  {doctor?.description ?? "No Description Available"}
+                </p>
+              </SectionCard>
+
+              <div className="doctor-details-stats">
+                <StatsCard
+                  value={getDoctorExperince(doctor?.doctorStartDate) ?? 0}
+                  icon={Clock}
+                  label="Years Exp"
+                />
+                <StatsCard
+                  value={doctor?.treatments ?? 0}
+                  icon={Users}
+                  label="Treatments"
+                />
+                <StatsCard
+                  value={reviews?.global?.totalRating ?? 0}
+                  icon={Star}
+                  color="#e0c438"
+                  bgColor="#e0c43822"
+                  label="Rating"
+                />
+                <StatsCard
+                  value={reviews?.global?.totalReviews ?? 0}
+                  icon={UserStar}
+                  color="#29b1e0"
+                  bgColor="#29b2e02e"
+                  label="Reviews"
+                />
               </div>
 
-              <p className="doctor-details-description">
-                {doctor?.description ?? "No Description Available"}
-              </p>
-            </SectionCard>
-
-            <div className="doctor-details-stats">
-              <StatsCard
-                value={getDoctorExperince(doctor?.doctorStartDate) ?? 0}
-                icon={Clock}
-                label="Years Exp"
-              />
-              <StatsCard
-                value={doctor?.treatments ?? 0}
-                icon={Users}
-                label="Treatments"
-              />
-              <StatsCard
-                value={doctor?.rating ?? 0}
-                icon={Star}
-                color="#e0c438"
-                bgColor="#e0c43822"
-                label="Rating"
-              />
-              <StatsCard
-                value={doctor?.reviews ?? 0}
-                icon={UserStar}
-                color="#29b1e0"
-                bgColor="#29b2e02e"
-                label="Reviews"
-              />
+              <SectionCard
+                margin="0px"
+                icon={Award}
+                title="Education & Training"
+              >
+                <ul className="doctor-details-education-list">
+                  {doctor?.educationAndTraining?.length ? (
+                    doctor?.educationAndTraining?.map?.((item, i) => (
+                      <li key={i}>{item ?? "-"}</li>
+                    ))
+                  ) : (
+                    <p className="no-data-cell">No Education Data</p>
+                  )}
+                </ul>
+              </SectionCard>
             </div>
 
-            <SectionCard margin="0px" icon={Award} title="Education & Training">
-              <ul className="doctor-details-education-list">
-                {doctor?.educationAndTraining?.length ? (
-                  doctor?.educationAndTraining?.map?.((item, i) => (
-                    <li key={i}>{item ?? "-"}</li>
+            <div className="doctor-details-right">
+              <SectionCard title="Consultation">
+                <div className="doctor-consultation-box">
+                  <div className="doctor-consultation-content">
+                    <h2>Consultation Fee:</h2>
+                    <span> Rs. {doctor?.price ?? 0}</span>
+                  </div>
+                  <div
+                    style={{ marginTop: "4px" }}
+                    className="doctor-consultation-content"
+                  >
+                    <h2>Time period:</h2>
+                    <span>{doctor?.timeCycle ?? "0min"}</span>
+                  </div>
+                </div>
+              </SectionCard>
+
+              <SectionCard title="Available Days">
+                {doctor?.availableDays?.length ? (
+                  doctor?.availableDays?.map?.((day, i) => (
+                    <InfoRow
+                      key={i}
+                      left={day?.day}
+                      right={`${formateTimeInM(day?.start) ?? "N/A"} - ${formateTimeInM(day?.end) ?? "N/A"}`}
+                    />
                   ))
                 ) : (
-                  <p className="no-data-cell">No Education Data</p>
+                  <p className="no-data-cell">No Schedule Added</p>
                 )}
-              </ul>
-            </SectionCard>
+              </SectionCard>
+            </div>
           </div>
-
-          <div className="doctor-details-right">
-            <SectionCard title="Consultation">
-              <div className="doctor-consultation-box">
-                <div className="doctor-consultation-content">
-                  <h2>Consultation Fee:</h2>
-                  <span> Rs. {doctor?.price ?? 0}</span>
-                </div>
-                <div
-                  style={{ marginTop: "4px" }}
-                  className="doctor-consultation-content"
-                >
-                  <h2>Time period:</h2>
-                  <span>{doctor?.timeCycle ?? "0min"}</span>
-                </div>
-              </div>
-
-              {/* <button className="doctor-details-book-btn">
-                Book Appointment
-              </button> */}
-            </SectionCard>
-
-            <SectionCard title="Available Days">
-              {doctor?.availableDays?.length ? (
-                doctor?.availableDays?.map?.((day, i) => (
-                  <InfoRow
-                    key={i}
-                    left={day?.day}
-                    right={`${formateTimeInM(day?.start) ?? "N/A"} - ${formateTimeInM(day?.end) ?? "N/A"}`}
-                  />
-                ))
-              ) : (
-                <p className="no-data-cell">No Schedule Added</p>
-              )}
-            </SectionCard>
-          </div>
-        </div>
+          <ReviewSection
+            reviews={reviews?.data}
+            global={reviews?.global}
+            meta={reviews?.meta}
+            loading={loadingReviews}
+            loadMoreLoading={loadMoreReviewsLoading}
+            handleChange={(nextPage) => handleLoadMoreReviews(nextPage)}
+          />
+        </>
       ) : (
         <div className="no-data-cell">No doctor found.</div>
       )}

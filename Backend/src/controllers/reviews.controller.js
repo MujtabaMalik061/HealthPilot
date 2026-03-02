@@ -122,6 +122,68 @@ export const getSingleUserReviews = async (req, res) => {
   }
 };
 
+export const getAppointmentReviews = async (req, res) => {
+  try {
+    const { appointmentId } = req.query;
+
+    if (!appointmentId) {
+      return res.status(400).json({
+        success: false,
+        message: "appointmentId required",
+      });
+    }
+
+    const objectAppointmentId = new mongoose.Types.ObjectId(appointmentId);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const query = { appointment: objectAppointmentId };
+    const reviews = await Review.find(query)
+      .populate("sender", "profilImg name email")
+      .populate("reciver", "profilImg name email")
+      .populate("appointment")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const total = await Review.countDocuments(query);
+    const ratingStats = await Review.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: null,
+          totalReviews: { $sum: 1 },
+          averageRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+
+    const global = {
+      totalReviews: ratingStats[0]?.totalReviews || 0,
+      totalRating: ratingStats[0]?.averageRating
+        ? Number(ratingStats[0].averageRating.toFixed(1))
+        : 0,
+    };
+
+    res.status(200).json({
+      success: true,
+      data: reviews,
+      meta: {
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+      },
+      global,
+    });
+  } catch (error) {
+    console.error("Get appointment reviews error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch appointment reviews",
+    });
+  }
+};
+
 export const getReviewById = async (req, res) => {
   try {
     const { Id } = req.params;

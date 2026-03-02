@@ -194,7 +194,7 @@ const App = () => {
           <Route
             path="/service-details/:serviceId"
             element={
-              <ProtectedRoute role={["admin", "doctor", "patient"]}>
+              <ProtectedRoute role={["admin", "patient"]}>
                 <ServiceDetails />
               </ProtectedRoute>
             }

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { formateDate } from "../../utils/Helper";
 import { useNavigate, useParams } from "react-router-dom";
-import { GoBackBtn, ProfileImage, ReviewCard } from "../CustomComponents";
+import { GoBackBtn, ProfileImage, ReviewCard, ReviewSection } from "../CustomComponents";
 import Loader from "../Loader";
 import { IMAGES } from "../../utils/constants";
 import { getAppointmentByIdHelper } from "../../services/AppointmentsServices";
 import { useAuth } from "../../context/AuthContext";
 import ReviewDoctor from "../../pages/Paitent/ReviewDoctor";
 import { Star } from "lucide-react";
-import { getReviewByIdHelper } from "../../services/ReviewServices";
+import { getAppointmentReviewsHelper } from "../../services/ReviewServices";
 
 const SectionCard = ({
   title = "",
@@ -55,14 +55,16 @@ const AppointmentDetails = () => {
       setIsReviewModel(true);
     } else if (appointment?.review) {
       setIsReviewModel(false);
-      fetchReviewDetails(appointment?.review);
     } else {
       setIsReviewModel(false);
     }
   }, [appointment]);
 
   useEffect(() => {
-    if (appointmentId) fetchAppointment(appointmentId);
+    if (appointmentId) {
+      fetchAppointment(appointmentId);
+      fetchReviewDetails(appointmentId);
+    }
     else setLoading(false);
   }, [appointmentId]);
 
@@ -77,9 +79,9 @@ const AppointmentDetails = () => {
     }
   };
 
-  const fetchReviewDetails = async (reviewId) => {
+  const fetchReviewDetails = async (appointmentId) => {
     try {
-      const res = await getReviewByIdHelper(reviewId);
+      const res = await getAppointmentReviewsHelper(appointmentId);
       setReviewDetails(res?.data);
     } catch (err) {
       console.error("Failed to load review details:", err?.resonse);
@@ -106,6 +108,11 @@ const AppointmentDetails = () => {
   const reviewData = {
     reciver: appointment?.doctor?._id,
     appointment: appointment?._id,
+  };
+  
+  const globalReview = {
+    totalReviews: 1,
+    totalRating: reviewDetails?.[0]?.rating,
   };
 
   return (
@@ -238,7 +245,11 @@ const AppointmentDetails = () => {
           </SectionCard>
         </div>
       </div>
-     
+      <ReviewSection
+        reviews={reviewDetails}
+        global={globalReview}
+        loading={loadingReview}
+      />
       {isReviewModel && (
         <ReviewDoctor
           data={reviewData}

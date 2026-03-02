@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Header, Input, ProfileImage } from "../components/CustomComponents";
 import "../assets/style/Setting.css";
-import { Camera, Lock, Palette } from "lucide-react";
+import { Camera, Infinity, Lock, Mail, Palette, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
-import { IMAGES } from "../utils/constants";
+import {  IMAGES } from "../utils/constants";
 import Loader from "../components/Loader";
 import { handleUploadImage } from "../utils/Helper";
 import { toast } from "sonner";
@@ -106,18 +106,6 @@ const Setting = () => {
             }
             className="settings-avatar"
           />
-          {/* <div className="settings-avatar">
-            {loading ? (
-              <Loader color="#fff" size="18" />
-            ) : avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar Preview" />
-            ) : (
-              <img
-                src={currentUser?.profilImg || IMAGES.PlaceHolder}
-                alt="Avatar"
-              />
-            )}
-          </div> */}
           <div className="settings-avatar-actions">
             <input
               type="file"
@@ -149,7 +137,7 @@ const Setting = () => {
           setValue={setName}
           placeholder="John doe"
           type="inputIcon"
-          Icon={Lock}
+          Icon={User}
         />
 
         <Input
@@ -158,7 +146,7 @@ const Setting = () => {
           readOnly={true}
           placeholder="john@example.com"
           type="inputIcon"
-          Icon={Lock}
+          Icon={Mail}
           InputType="email"
           onClick={() => toast.info("Not allow to change email.")}
         />
@@ -238,7 +226,7 @@ const Setting = () => {
           <div>
             <h2 className="settings-section-title">Appearance</h2>
             <p className="settings-section-description">
-              Customize how BuddySpace looks
+              Customize how HealthPilot looks
             </p>
           </div>
         </div>

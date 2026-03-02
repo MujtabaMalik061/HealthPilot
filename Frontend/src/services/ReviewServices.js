@@ -12,14 +12,29 @@ export const getAllReviewsHelper = async (page = 1, limit = 20) => {
 };
 
 export const getSingleUserReviewsHelper = async (
-  page = 1,
-  limit = 20,
   userId = null,
   from = "all",
+  page = 1,
+  limit = 20,
 ) => {
   try {
     const res = await API.get("/api/reviews/getSingleUserReviews", {
       params: { page, limit, userId, from },
+    });
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getAppointmentReviewsHelper = async (
+  appointmentId = null,
+  page = 1,
+  limit = 20,
+) => {
+  try {
+    const res = await API.get("/api/reviews/getAppointmentReviews", {
+      params: { page, limit, appointmentId },
     });
     return res.data;
   } catch (err) {

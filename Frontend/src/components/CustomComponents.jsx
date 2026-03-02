@@ -18,6 +18,7 @@ import {
 import { IMAGES } from "../utils/constants";
 import Loader from "./Loader";
 import { useNavigate } from "react-router";
+import { formateDate } from "../utils/Helper";
 
 export const Input = ({
   label = "",
@@ -519,11 +520,20 @@ export const DoctorCard = ({
   treatments = 0,
   price = 0,
   available = false,
+  adminDoctorDetails = false,
   isDetails = true,
+  isBookNow = true,
 }) => {
   const navigate = useNavigate();
   const plusSpecialty = specialty?.length > 0 ? specialty?.length - 1 : 0;
 
+  const handleViewDetails = () => {
+    if (adminDoctorDetails) {
+      navigate(`/admin/doctor-details/${doctorId}`);
+    } else {
+      navigate(`/doctor-details/${doctorId}`);
+    }
+  };
   return (
     <div className="custom-doctor-card">
       <ProfileImage
@@ -558,34 +568,39 @@ export const DoctorCard = ({
           <span>{treatments} treatments</span>
         </div>
       </div>
+      <div className="custom-doctor-divider"></div>
+      <div
+        style={{ marginBottom: isDetails ? "" : "0px" }}
+        className="custom-doctor-footer"
+      >
+        <div className="custom-doctor-price">
+          <strong>Rs.{price}</strong>
+          <span>/visit</span>
+        </div>
+
+        <span
+          className={`custom-doctor-status ${available ? "available" : "Unavailable"}`}
+        >
+          {available ? "Available" : "Unavailable"}
+        </span>
+      </div>
       {isDetails && (
         <>
-          <div className="custom-doctor-divider"></div>
-          <div className="custom-doctor-footer">
-            <div className="custom-doctor-price">
-              <strong>Rs.{price}</strong>
-              <span>/visit</span>
-            </div>
-
-            <span
-              className={`custom-doctor-status ${available ? "available" : "Unavailable"}`}
-            >
-              {available ? "Available" : "Unavailable"}
-            </span>
-          </div>
           <div className="custom-doctor-actions">
             <button
-              onClick={() => navigate(`/doctor-details/${doctorId}`)}
+              onClick={handleViewDetails}
               className="custom-doctor-btn-outline"
             >
               View Profile
             </button>
-            <button
-              onClick={() => navigate(`/appoint-booking/${doctorId}`)}
-              className="custom-doctor-btn-primary"
-            >
-              Book Now
-            </button>
+            {isBookNow && (
+              <button
+                onClick={() => navigate(`/appoint-booking/${doctorId}`)}
+                className="custom-doctor-btn-primary"
+              >
+                Book Now
+              </button>
+            )}
           </div>
         </>
       )}
@@ -934,11 +949,39 @@ export const ReviewCard = ({
   </div>
 );
 
-export const ReviewSection = ({ reviews, global, meta }) => {
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [lastPage, setLastPage] = useState(0);
-  const [loading, setLoading] = useState(false);
+export const ReviewSection = ({
+  reviews = [],
+  global = {},
+  meta = {},
+  loading = false,
+  loadMoreLoading = false,
+  handleChange = () => {},
+}) => {
+  const [allReviews, setAllReviews] = useState([]);
+
+  useEffect(() => {
+    if (!reviews) return;
+
+    setAllReviews((prev) => {
+      if (meta?.page === 1) {
+        if (JSON.stringify(prev) === JSON.stringify(reviews)) {
+          return prev;
+        }
+        return reviews;
+      }
+
+      const newIds = new Set(prev.map((r) => r._id));
+      const filtered = reviews.filter((r) => !newIds.has(r._id));
+
+      if (filtered.length === 0) return prev;
+
+      return [...prev, ...filtered];
+    });
+  }, [reviews, meta?.page]);
+
+  const handlePageChange = () => {
+    handleChange(meta?.page + 1 || 1);
+  };
 
   return (
     <div className="custom-review-container">
@@ -956,16 +999,27 @@ export const ReviewSection = ({ reviews, global, meta }) => {
         </span>
       </div>
       <div className="custom-review-container-body">
-        {loadingReview ? (
+        {loading ? (
           <Loader />
-        ) : reviewDetails ? (
-          <ReviewCard
-            profile_Image={reviewDetails?.sender?.profilImg}
-            name={reviewDetails?.sender?.name || "N/A"}
-            description={reviewDetails?.review || "N/A"}
-            rating={reviewDetails?.rating || 0}
-            date={formateDate(reviewDetails?.createdAt) || "N/A"}
-          />
+        ) : allReviews.length > 0 ? (
+          <>
+            {allReviews?.map((review) => (
+              <ReviewCard
+                key={review?._id}
+                profile_Image={review?.sender?.profilImg}
+                name={review?.sender?.name || "N/A"}
+                description={review?.review || "N/A"}
+                rating={review?.rating || 0}
+                date={formateDate(review?.createdAt) || "N/A"}
+              />
+            ))}
+            <LoadMore
+              loading={loadMoreLoading}
+              disabled={loadMoreLoading}
+              show={meta?.page < meta?.totalPages}
+              onLoad={handlePageChange}
+            />
+          </>
         ) : (
           <div className="empty-data">Review not found.</div>
         )}

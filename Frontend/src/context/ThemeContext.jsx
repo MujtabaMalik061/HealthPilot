@@ -10,7 +10,7 @@ export const ThemeProvider = ({ children }) => {
     }
     return "light";
   };
-
+  
   const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
@@ -47,4 +47,3 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
-

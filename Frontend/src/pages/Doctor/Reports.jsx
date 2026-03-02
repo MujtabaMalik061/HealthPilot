@@ -170,7 +170,9 @@ const Reports = () => {
 
                 <h3 className="report-title">{report?.title}</h3>
 
-                <p className="report-description">{report?.description}</p>
+                <p className="report-description elepsis">
+                  {report?.description}
+                </p>
 
                 <div className="report-meta">
                   <span className="against">
