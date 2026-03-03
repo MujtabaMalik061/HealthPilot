@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       );
 
       const data = await res.json();
+
       if (res.ok) {
         if (data.status === "approved") {
           setCurrentUser(data);

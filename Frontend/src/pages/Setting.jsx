@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Header, Input, ProfileImage } from "../components/CustomComponents";
 import "../assets/style/Setting.css";
-import { Camera, Infinity, Lock, Mail, Palette, User } from "lucide-react";
+import { Bell, Camera, Lock, Mail, Palette, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
-import {  IMAGES } from "../utils/constants";
+import { IMAGES } from "../utils/constants";
 import Loader from "../components/Loader";
 import { handleUploadImage } from "../utils/Helper";
 import { toast } from "sonner";
 import {
   updatePasswordHelper,
   UpdateProfileHelper,
+  updatePushHelper,
 } from "../services/SettingHelper";
 
 const Setting = () => {
   const { theme, toggleTheme } = useTheme();
-  const { currentUser, loading } = useAuth();
+  const { currentUser } = useAuth();
   const [loadingType, setLoadingType] = useState("");
   const [name, setName] = useState("");
   const [avatarFile, setAvatarFile] = useState(null);
@@ -26,9 +27,16 @@ const Setting = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [appointmentNotification, setAppointmentNotification] = useState(false);
+  const [appointmentReminder, setAppointmentReminder] = useState(false);
+  const [reportNotification, setReportNotification] = useState(false);
+
   useEffect(() => {
     if (currentUser) {
       setName(currentUser?.name);
+      setAppointmentNotification(currentUser?.appointmentNotification);
+      setAppointmentReminder(currentUser?.appointmentReminder);
+      setReportNotification(currentUser?.reportNotification);
     }
   }, [currentUser]);
 
@@ -80,6 +88,25 @@ const Setting = () => {
     } catch (err) {
       console.error("Failed to update password:", err);
       toast.error("Failed to Updated Password");
+    } finally {
+      setLoadingType("");
+    }
+  };
+
+  const handlePushUpdate = async () => {
+    try {
+      setLoadingType("UpdatePush");
+      const payload = {
+        appointmentNotification,
+        appointmentReminder,
+        reportNotification,
+      };
+      const res = await updatePushHelper(currentUser?._id, payload);
+      toast.success("Pushes Updated Successfuly.");
+      return res;
+    } catch (err) {
+      console.error("Failed to update Pushes:", err);
+      toast.error("Failed to Updated Pushes");
     } finally {
       setLoadingType("");
     }
@@ -216,6 +243,90 @@ const Setting = () => {
             <Loader size="15" stroke="2" />
           ) : (
             "Update Password"
+          )}
+        </button>
+      </section>
+
+      <section className="settings-section">
+        <div className="settings-section-header">
+          <Bell size={20} />
+          <div>
+            <h2 className="settings-section-title">Notifications</h2>
+            <p className="settings-section-description">
+              Configure how you receive notifications
+            </p>
+          </div>
+        </div>
+        <div
+          style={{
+            padding: "10px 0px",
+            borderBottom: "1px solid var(--border)",
+          }}
+          className="settings-toggle-row"
+        >
+          <div>
+            <span className="settings-toggle-title">
+              Appointment Notifications
+            </span>
+            <p className="settings-toggle-description">
+              Receive email about new appointment
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={appointmentNotification}
+            onChange={(e) => setAppointmentNotification(e.target.checked)}
+          />
+        </div>
+        <div
+          style={{
+            padding: "10px 0px",
+            borderBottom: "1px solid var(--border)",
+          }}
+          className="settings-toggle-row"
+        >
+          <div>
+            <span className="settings-toggle-title">
+              Appointment Reminder Notifications
+            </span>
+            <p className="settings-toggle-description">
+              Receive reminders for your upcoming appointments.
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={appointmentReminder}
+            onChange={(e) => setAppointmentReminder(e.target.checked)}
+          />
+        </div>
+        <div
+          style={{
+            padding: "10px 0px",
+            borderBottom: "1px solid var(--border)",
+          }}
+          className="settings-toggle-row"
+        >
+          <div>
+            <span className="settings-toggle-title">Report Notifications</span>
+            <p className="settings-toggle-description">
+              Receive email about any one reported you.
+            </p>
+          </div>
+          <input
+            type="checkbox"
+            checked={reportNotification}
+            onChange={(e) => setReportNotification(e.target.checked)}
+          />
+        </div>
+        <button
+          disabled={loadingType !== ""}
+          onClick={handlePushUpdate}
+          className="settings-secondary-button"
+        >
+          {loadingType === "UpdatePush" ? (
+            <Loader size="15" stroke="2" />
+          ) : (
+            "Update Push"
           )}
         </button>
       </section>

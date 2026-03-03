@@ -111,8 +111,8 @@ const AppointmentDetails = () => {
   };
   
   const globalReview = {
-    totalReviews: 1,
-    totalRating: reviewDetails?.[0]?.rating,
+    totalReviews: reviewDetails?.length || 0,
+    totalRating: reviewDetails?.[0]?.rating || 0,
   };
 
   return (

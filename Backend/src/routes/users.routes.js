@@ -5,6 +5,7 @@ import {
   getUsersByType,
   updateUserStatus,
   userCountStates,
+  updatePush,
 } from "../controllers/users.controller.js";
 import { verifyToken } from "../middlewares/auth.middleware.js";
 
@@ -14,5 +15,6 @@ router.get("/getAllUsers", verifyToken, getAllUsers);
 router.get("/getUsersByType/:status", getUsersByType);
 router.get("/userCountStates/:role", verifyToken, userCountStates);
 router.patch("/:userId", verifyToken, updateUserStatus);
+router.patch("/update-push/:userId", verifyToken, updatePush);
 
 export default router;

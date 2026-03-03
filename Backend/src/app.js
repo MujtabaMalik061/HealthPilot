@@ -13,6 +13,7 @@ import appointmentsRoute from "./routes/appointments.routes.js";
 import reviewsRoute from "./routes/reviews.routes.js";
 
 import connectToDB from "./database/mongodb.js";
+import { startMailScheduler } from "./utils/mail.scheduler.js";
 
 const app = express();
 connectToDB();
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, async () => {
   await connectToDB();
+  startMailScheduler();
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 

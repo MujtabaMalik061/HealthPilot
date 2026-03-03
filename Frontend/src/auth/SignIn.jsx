@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import Loader from "../components/Loader";
 import { useAuth } from "../context/AuthContext";
 import { DashboardRoute } from "../utils/Helper";
+import ForgetPasswordParent from "./ForgetPasswordParent";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -150,7 +151,8 @@ const SignIn = () => {
           </p>
         </div>
       </div>
-      {isForget && <ResetPasswordModel onClose={() => setIsForget(false)} />}
+      {isForget && <ForgetPasswordParent onClose={() => setIsForget(false)} />}
+      {/* {isForget && <ResetPasswordModel onClose={() => setIsForget(false)} />} */}
     </div>
   );
 };

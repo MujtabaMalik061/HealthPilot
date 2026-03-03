@@ -1,40 +1,53 @@
 import React, { useState } from "react";
 import { Input } from "../components/CustomComponents";
 import { ArrowRight } from "lucide-react";
+import { forgetPasswordHelper } from "../services/SettingHelper";
+import { toast } from "sonner";
 
-const ResetPasswordModel = ({ onClose }) => {
-  const [modelType, setModelType] = useState("email");
-  const [email, setEmail] = useState("");
-  //   const []=useState("");
+const ResetPasswordModel = ({ email, setEmail, setModelType }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleReset = async () => {
+    if (!email) return toast.error("Email is required.");
+    try {
+      setLoading(true);
+      await forgetPasswordHelper({ email });
+      toast.success("Check your mail.");
+      setModelType("otp");
+    } catch (err) {
+      toast.error(err?.message || "Failed to forget");
+      console.error("Failed to reset password:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="model-overlay">
-      <div style={{ width: "500px" }} className="model-content">
-        <div className="model-header">
-          <h3 className="model-header-title">Reset Password</h3>
-          <button onClick={onClose} className="model-header-close-btn">
-            ×
-          </button>
-        </div>
-        <div className="model-content-container">
-          <Input
-            label="Title"
-            value={email}
-            setValue={setEmail}
-            placeholder="you@example.com"
-          />
-          <button
-            style={{ marginTop: "0px", padding: "9px", borderRadius: "5px" }}
-            className="auth-btn-primary"
-          >
+    <>
+      <Input
+        label="Email"
+        value={email}
+        setValue={setEmail}
+        placeholder="you@example.com"
+      />
+      <button
+        style={{ marginTop: "0px", padding: "9px", borderRadius: "5px" }}
+        className="auth-btn-primary"
+        onClick={handleReset}
+        disabled={loading}
+      >
+        {loading ? (
+          "Sending..."
+        ) : (
+          <>
             Reset Email
             <span className="icon">
               <ArrowRight size={16} />
             </span>
-          </button>
-        </div>
-      </div>
-    </div>
+          </>
+        )}
+      </button>
+    </>
   );
 };
 

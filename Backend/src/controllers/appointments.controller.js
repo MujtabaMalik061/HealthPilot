@@ -1,5 +1,11 @@
 import Appointment from "../models/appointment.model.js";
 import User from "../models/user.model.js";
+import { sendMail } from "../utils/mail.utils.js";
+import {
+  AppointmentBooked,
+  AppointmentReminder,
+} from "../services/mailHelper.services.js";
+import Mail from "../models/mail.model.js";
 
 export const getAllAppointments = async (req, res) => {
   try {
@@ -305,39 +311,133 @@ export const getDoctorAvaility = async (req, res) => {
 export const addAppointment = async (req, res) => {
   try {
     const {
-      doctor,
-      patient,
+      doctor: doctorId,
+      patient: patientId,
       fee,
       appointmentPeriod,
       appointmentType,
       description,
     } = req.body;
 
-    if (!doctor || !patient || !fee || !appointmentPeriod) {
+    if (!doctorId || !patientId || !fee || !appointmentPeriod) {
+      console.log("Validation failed: missing required fields");
       return res.status(400).json({
         message: "Doctor, patient, fee and appointment period are required",
       });
     }
 
+    const doctor = await User.findById(doctorId).select(
+      "name email profilImg appointmentNotification",
+    );
+    const patient = await User.findById(patientId).select(
+      "name email profilImg appointmentNotification",
+    );
+
+    if (!doctor || !patient) {
+      console.log("Doctor or patient not found");
+      return res.status(404).json({
+        message: "Doctor or patient not found",
+      });
+    }
+
     const newAppointment = await Appointment.create({
-      doctor,
-      patient,
+      doctor: {
+        _id: doctor._id,
+        name: doctor.name,
+        email: doctor.email,
+        profilImg: doctor.profilImg,
+      },
+      patient: {
+        _id: patient._id,
+        name: patient.name,
+        email: patient.email,
+        profilImg: patient.profilImg,
+      },
       fee,
       appointmentPeriod,
       appointmentType,
       description,
     });
 
+    const populatedAppointment = await Appointment.findById(newAppointment._id)
+      .populate("doctor", "name email profilImg")
+      .populate("patient", "name email profilImg");
+
+    const emailPromises = [];
+
+    if (doctor.appointmentNotification) {
+      console.log("Sending email to doctor:", doctor.email);
+      emailPromises.push(
+        sendMail({
+          to: doctor.email,
+          subject: "New Appointment Booked",
+          html: AppointmentBooked(populatedAppointment, true),
+        }),
+      );
+    } else {
+      console.log("Doctor has notifications turned off");
+    }
+
+    if (patient.appointmentNotification) {
+      console.log("Sending email to patient:", patient.email);
+      emailPromises.push(
+        sendMail({
+          to: patient.email,
+          subject: "Your Appointment is Confirmed",
+          html: AppointmentBooked(populatedAppointment),
+        }),
+      );
+    } else {
+      console.log("Patient has notifications turned off");
+    }
+
+    await Promise.all(emailPromises);
     res.status(201).json({
       success: true,
       message: "Appointment created successfully",
-      data: newAppointment,
+      data: populatedAppointment,
     });
   } catch (error) {
     console.error("Add appointment error:", error);
     res.status(500).json({ message: "Failed to create appointment" });
   }
 };
+
+// export const updateAppointment = async (req, res) => {
+//   try {
+//     const { Id } = req.params;
+
+//     const appointment = await Appointment.findById(Id);
+//     if (!appointment) {
+//       return res.status(404).json({ message: "Appointment not found" });
+//     }
+
+//     const { status, rejectReason, cancelledBy } = req.body;
+
+//     if (status) appointment.status = status;
+//     if (rejectReason !== undefined) appointment.rejectReason = rejectReason;
+//     if (cancelledBy !== undefined) appointment.cancelledBy = cancelledBy;
+
+//     if (status === "completed") {
+//       const doctor = await User.findById(appointment.doctor);
+//       if (doctor && doctor.role === "doctor") {
+//         doctor.treatments = (doctor.treatments || 0) + 1;
+//         await doctor.save();
+//       }
+//     }
+
+//     await appointment.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Appointment updated successfully",
+//       data: appointment,
+//     });
+//   } catch (error) {
+//     console.error("Update appointment error:", error);
+//     res.status(500).json({ message: "Failed to update appointment" });
+//   }
+// };
 
 export const updateAppointment = async (req, res) => {
   try {
@@ -353,16 +453,35 @@ export const updateAppointment = async (req, res) => {
     if (status) appointment.status = status;
     if (rejectReason !== undefined) appointment.rejectReason = rejectReason;
     if (cancelledBy !== undefined) appointment.cancelledBy = cancelledBy;
-
     if (status === "completed") {
-      const doctor = await User.findById(appointment.doctor);
-      if (doctor && doctor.role === "doctor") {
-        doctor.treatments = (doctor.treatments || 0) + 1;
-        await doctor.save();
+      const doctorUser = await User.findById(appointment.doctor);
+      if (doctorUser && doctorUser.role === "doctor") {
+        doctorUser.treatments = (doctorUser.treatments || 0) + 1;
+        await doctorUser.save();
       }
     }
 
     await appointment.save();
+    if (status === "approved") {
+      const populatedAppointment = await Appointment.findById(Id)
+        .populate("doctor", "name email profilImg")
+        .populate("patient", "name email profilImg");
+
+      const { doctor, patient, appointmentPeriod } = populatedAppointment;
+
+      const receivedBy = [doctor.email, patient.email];
+      const appointmentDate = new Date(appointmentPeriod.date);
+
+      const reminderDate = new Date(appointmentDate);
+      reminderDate.setDate(reminderDate.getDate() - 1);
+
+      await Mail.create({
+        sendAt: reminderDate,
+        rawData: AppointmentReminder(populatedAppointment),
+        receivedBy,
+        appointmentId: populatedAppointment._id,
+      });
+    }
 
     res.status(200).json({
       success: true,

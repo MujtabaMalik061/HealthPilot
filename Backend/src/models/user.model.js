@@ -44,6 +44,12 @@ const userSchema = new Schema(
         return this.role === "doctor" ? "pending" : "approved";
       },
     },
+    otpCode: { type: String, default: null },
+    otpExpires: { type: Date, default: null },
+    otpVerified: { type: Boolean, default: false },
+    appointmentNotification: { type: Boolean, default: false },
+    appointmentReminder: { type: Boolean, default: false },
+    reportNotification: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
