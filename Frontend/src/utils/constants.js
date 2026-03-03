@@ -1,7 +1,6 @@
 import SiteLogo from "../assets/images/SiteLogo.png";
 import PlaceHolder from "../assets/images/PlaceHolder.webp";
 import NotFound from "../assets/images/NotFound.png";
-import { useTheme } from "../context/ThemeContext";
 
 export const IMAGES = {
   SiteLogo,

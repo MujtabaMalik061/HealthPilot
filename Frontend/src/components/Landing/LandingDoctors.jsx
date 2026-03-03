@@ -4,6 +4,7 @@ import Loader from "../Loader";
 import { DoctorCard, LoadMore } from "../CustomComponents";
 import { getDoctorExperince } from "../../utils/Helper";
 import { getUsersByTypeHelper } from "../../services/UsersHelper";
+import { getSingleUserReviewCountHelper } from "../../services/ReviewServices";
 import { limit } from "../../utils/constants";
 
 const LandingDoctorsSections = () => {
@@ -19,6 +20,36 @@ const LandingDoctorsSections = () => {
     getDoctors(page);
   }, [page]);
 
+  // const getDoctors = async (nextPage = 1) => {
+  //   try {
+  //     if (!loading && nextPage === 1) {
+  //       setLoading(true);
+  //     } else {
+  //       setLoadMoreLoading(true);
+  //     }
+  //     const res = await getUsersByTypeHelper(
+  //       nextPage,
+  //       limit,
+  //       "",
+  //       "doctor",
+  //       "",
+  //       "viewed",
+  //     );
+  //     if (nextPage === 1) {
+  //       setDoctors(res?.data ?? []);
+  //     } else {
+  //       setDoctors((prev) => [...(prev ?? []), ...(res?.data ?? [])]);
+  //     }
+  //     setTotal(res?.meta?.total);
+  //     setLastPage(res?.meta?.totalPages);
+  //   } catch (err) {
+  //     console.error("Failed to get doctors:", err);
+  //   } finally {
+  //     setLoading(false);
+  //     setLoadMoreLoading(false);
+  //   }
+  // };
+
   const getDoctors = async (nextPage = 1) => {
     try {
       if (!loading && nextPage === 1) {
@@ -26,6 +57,7 @@ const LandingDoctorsSections = () => {
       } else {
         setLoadMoreLoading(true);
       }
+
       const res = await getUsersByTypeHelper(
         nextPage,
         limit,
@@ -34,11 +66,42 @@ const LandingDoctorsSections = () => {
         "",
         "viewed",
       );
+
+      let doctorsData = res?.data ?? [];
+
+      const doctorsWithReviews = await Promise.all(
+        doctorsData.map(async (doctor) => {
+          try {
+            const reviewRes = await getSingleUserReviewCountHelper(
+              doctor._id,
+              "reciver",
+            );
+            return {
+              ...doctor,
+              reviewStats: reviewRes.global ?? {
+                totalReviews: 0,
+                totalRating: 0,
+              },
+            };
+          } catch (err) {
+            console.error(
+              `Failed to fetch reviews for doctor ${doctor._id}:`,
+              err,
+            );
+            return {
+              ...doctor,
+              reviewStats: { totalReviews: 0, totalRating: 0 },
+            };
+          }
+        }),
+      );
+
       if (nextPage === 1) {
-        setDoctors(res?.data ?? []);
+        setDoctors(doctorsWithReviews);
       } else {
-        setDoctors((prev) => [...(prev ?? []), ...(res?.data ?? [])]);
+        setDoctors((prev) => [...(prev ?? []), ...doctorsWithReviews]);
       }
+
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
     } catch (err) {
@@ -63,7 +126,7 @@ const LandingDoctorsSections = () => {
         </p>
       </div>
       {loading ? (
-        <Loader style={{height:"50vh"}}/>
+        <Loader style={{ height: "50vh" }} />
       ) : doctors?.length > 0 ? (
         <div className="landing-page-doctor-grid">
           {doctors.map((doctor, index) => {
@@ -74,8 +137,8 @@ const LandingDoctorsSections = () => {
                 doctorId={doctor?._id}
                 name={doctor?.name || "N/A"}
                 specialty={doctor?.specialist || "N/A"}
-                rating={doctor?.rating || 0}
-                reviews={doctor?.reviews || 0}
+                rating={doctor?.reviewStats?.totalRating || 0}
+                reviews={doctor?.reviewStats?.totalReviews || 0}
                 experience={
                   getDoctorExperince(doctor?.doctorStartDate) || "N/A"
                 }

@@ -11,7 +11,7 @@ import Loader from "../Loader";
 import { IMAGES, limit } from "../../utils/constants";
 import { updateUserStatusHelper } from "../../services/UsersHelper";
 import { toast } from "sonner";
-import { Award, Clock, MapPin, Star, Users, UserStar } from "lucide-react";
+import { Award, Clock, Mail, MapPin, Star, Users, UserStar } from "lucide-react";
 import { getSingleUserReviewsHelper } from "../../services/ReviewServices";
 
 const SectionCard = ({
@@ -136,7 +136,6 @@ const DoctorDetails = () => {
       </>
     );
   }
-  
 
   return (
     <div className="page-container">
@@ -168,6 +167,14 @@ const DoctorDetails = () => {
                     <p className="doctor-details-specialist">
                       {doctor?.specialist?.join?.(", ") ?? "No Specialist"}
                     </p>
+                    <div style={{marginBottom:"4px"}} className="doctor-details-meta">
+                      <span>
+                        <span className="icon">
+                          <Mail size={14} />
+                        </span>
+                        {doctor?.email || "N/A"}
+                      </span>
+                    </div>
                     <div className="doctor-details-meta">
                       <span
                         style={{

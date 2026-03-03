@@ -122,6 +122,58 @@ export const getSingleUserReviews = async (req, res) => {
   }
 };
 
+export const getSingleUserReviewCount = async (req, res) => {
+  try {
+    const { userId, from } = req.query;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "userId required" });
+    }
+
+    const objectUserId = new mongoose.Types.ObjectId(userId);
+
+    let query = {};
+    if (from === "sender") {
+      query.sender = objectUserId;
+    } else if (from === "reciver") {
+      query.reciver = objectUserId;
+    } else {
+      query.$or = [{ sender: objectUserId }, { reciver: objectUserId }];
+    }
+
+    const ratingStats = await Review.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: null,
+          totalReviews: { $sum: 1 },
+          totalRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+
+    const global = {
+      totalReviews: ratingStats[0]?.totalReviews || 0,
+      totalRating: ratingStats[0]?.totalRating
+        ? Number(ratingStats[0].totalRating.toFixed(1))
+        : 0,
+    };
+
+    res.status(200).json({
+      success: true,
+      global,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user review stats",
+    });
+  }
+};
+
 export const getAppointmentReviews = async (req, res) => {
   try {
     const { appointmentId } = req.query;

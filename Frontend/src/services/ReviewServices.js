@@ -27,6 +27,20 @@ export const getSingleUserReviewsHelper = async (
   }
 };
 
+export const getSingleUserReviewCountHelper = async (
+  userId = null,
+  from = "all",
+) => {
+  try {
+    const res = await API.get("/api/reviews/getSingleUserReviewCount", {
+      params: { userId, from },
+    });
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const getAppointmentReviewsHelper = async (
   appointmentId = null,
   page = 1,

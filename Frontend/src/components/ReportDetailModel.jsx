@@ -13,20 +13,25 @@ const ReportDetailModel = ({ data, onClose }) => {
   const { currentUser } = useAuth();
   const [modelType, setModelType] = useState("details");
   const [adminResponse, setAdminResponse] = useState("");
+  const [loadingResolve, setLoadingResolve] = useState(false);
 
   const handleUpdateReport = async () => {
-    if (adminResponse.trim() === "") return toast.error("Detail note is required.");
+    if (adminResponse.trim() === "")
+      return toast.error("Detail note is required.");
     try {
+      setLoadingResolve(true);
       await resolveReportHelper({
         reportId: data?._id,
         status: "resolved",
         adminResponse,
       });
-      toast.success("report resolved successfully")
+      toast.success("report resolved successfully");
     } catch (err) {
-      console.error("Failed to update report",err);
-      toast.error("Failed to resolve report")
+      console.error("Failed to update report", err);
+      toast.error("Failed to resolve report");
     } finally {
+      setLoadingResolve(false);
+      onClose();
     }
   };
 
@@ -43,13 +48,17 @@ const ReportDetailModel = ({ data, onClose }) => {
   const actionRoute = getActionRoute();
 
   return (
-    <div onClick={onClose} className="model-overlay">
+    <div disabled={loadingResolve} onClick={onClose} className="model-overlay">
       <div onClick={(e) => e.stopPropagation()} className="model-content">
         <div className="model-header">
           <h3 className="model-header-title">
             {modelType === "resolve" ? "Resolve Report" : "Report Details"}
           </h3>
-          <button onClick={onClose} className="model-header-close-btn">
+          <button
+            disabled={loadingResolve}
+            onClick={onClose}
+            className="model-header-close-btn"
+          >
             ×
           </button>
         </div>
@@ -64,6 +73,7 @@ const ReportDetailModel = ({ data, onClose }) => {
             />
             <div className="report-details-actions">
               <button
+                disabled={loadingResolve}
                 onClick={() => setModelType("details")}
                 className="report-details-action btn-primary"
               >
@@ -71,9 +81,10 @@ const ReportDetailModel = ({ data, onClose }) => {
               </button>
               <button
                 onClick={handleUpdateReport}
+                disabled={loadingResolve}
                 className="report-details-action btn-secondary"
               >
-                Confirm
+                {loadingResolve ? "Confirming..." : "Confirm"}
               </button>
             </div>
           </div>

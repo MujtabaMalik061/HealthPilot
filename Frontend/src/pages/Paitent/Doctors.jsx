@@ -12,6 +12,7 @@ import { getDoctorAvailabilty, getDoctorExperince } from "../../utils/Helper";
 import { getUsersByTypeHelper } from "../../services/UsersHelper";
 import { limit } from "../../utils/constants";
 import { getServicesHelper } from "../../services/AdminServices";
+import { getSingleUserReviewCountHelper } from "../../services/ReviewServices";
 
 const Doctors = () => {
   const [search, setSearch] = useState("");
@@ -53,6 +54,7 @@ const Doctors = () => {
       } else {
         setLoadMoreLoading(true);
       }
+
       const specialist =
         specialtiesFilter === "All Specialties" ? "" : specialtiesFilter;
 
@@ -64,12 +66,41 @@ const Doctors = () => {
         specialist,
         "viewed",
       );
+
+      let doctorsData = res?.data ?? [];
+
+      const doctorsWithReviews = await Promise.all(
+        doctorsData.map(async (doctor) => {
+          try {
+            const reviewRes = await getSingleUserReviewCountHelper(
+              doctor._id,
+              "reciver",
+            );
+            return {
+              ...doctor,
+              reviewStats: reviewRes.global ?? {
+                totalReviews: 0,
+                totalRating: 0,
+              },
+            };
+          } catch (err) {
+            console.error(`Failed to fetch reviews for ${doctor._id}:`, err);
+            return {
+              ...doctor,
+              reviewStats: { totalReviews: 0, totalRating: 0 },
+            };
+          }
+        }),
+      );
+
       if (nextPage === 1) {
-        setDoctors(res?.data ?? []);
+        setDoctors(doctorsWithReviews);
       } else {
-        setDoctors((prev) => [...(prev ?? []), ...(res?.data ?? [])]);
+        setDoctors((prev) => [...(prev ?? []), ...doctorsWithReviews]);
       }
-      if(page !== nextPage) return setPage(nextPage);
+
+      if (page !== nextPage) setPage(nextPage);
+
       setTotal(res?.meta?.total);
       setLastPage(res?.meta?.totalPages);
     } catch (err) {
@@ -163,8 +194,8 @@ const Doctors = () => {
                 doctorId={doctor?._id}
                 name={doctor?.name || "N/A"}
                 specialty={doctor?.specialist || "N/A"}
-                rating={doctor?.rating || 0}
-                reviews={doctor?.reviews || 0}
+                rating={doctor?.reviewStats?.totalRating || 0}
+                reviews={doctor?.reviewStats?.totalReviews || 0}
                 experience={
                   getDoctorExperince(doctor?.doctorStartDate) || "N/A"
                 }

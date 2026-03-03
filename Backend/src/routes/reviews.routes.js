@@ -3,6 +3,7 @@ import express from "express";
 import {
   getAllReviews,
   getSingleUserReviews,
+  getSingleUserReviewCount,
   getAppointmentReviews,
   getReviewById,
   addReview,
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.get("/getAllReviews", verifyToken, getAllReviews);
 router.get("/getSingleUserReviews", verifyToken, getSingleUserReviews);
+router.get("/getSingleUserReviewCount", getSingleUserReviewCount);
 router.get("/getAppointmentReviews", verifyToken, getAppointmentReviews);
 router.get("/getReviewById/:Id", verifyToken, getReviewById);
 router.post("/addReview", verifyToken, addReview);
