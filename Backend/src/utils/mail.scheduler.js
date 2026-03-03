@@ -5,7 +5,7 @@ import User from "../models/user.model.js";
 import { sendMail } from "./mail.utils.js";
 
 export const startMailScheduler = () => {
-  cron.schedule("*/1 * * * *", async () => {
+  cron.schedule("*/5 * * * *", async () => {
     console.log("Checking scheduled mails...");
 
     try {
