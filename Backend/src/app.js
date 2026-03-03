@@ -19,6 +19,12 @@ const app = express();
 connectToDB();
 
 app.use(cors());
+app.use(
+  cors({
+    origin: "https://healthpilot-system.vercel.app",
+    credentials: true,
+  }),
+);
 app.use(morgan("dev"));
 
 app.use(express.json({ limit: "10mb" }));
