@@ -12,7 +12,6 @@ import ReportDetailModel from "../components/ReportDetailModel";
 import { limit } from "../utils/constants";
 
 const AdminReports = () => {
-  // State
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
