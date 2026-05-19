@@ -37,4 +37,3 @@ export const addMail = async (req, res) => {
     });
   }
 };
-

@@ -37,9 +37,16 @@ import DoctorAppointments from "./pages/Doctor/Appointments.jsx";
 import AppointmentDetails from "./components/DetailsPages/AppointmentDetails.jsx";
 import Reports from "./pages/Doctor/Reports.jsx";
 
+import { ChatBot, ThemeProvider } from "local-chatbot";
+import "local-chatbot/style.css";
+import { store, theme } from "./utils/Helper.js";
+
 const App = () => {
   return (
     <>
+      <ThemeProvider>
+        <ChatBot store={store} theme={theme} botPosition="bottomRight" />
+      </ThemeProvider>
       <Routes>
         <Route
           path="/signIn"

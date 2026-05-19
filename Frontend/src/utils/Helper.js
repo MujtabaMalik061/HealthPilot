@@ -171,3 +171,45 @@ export const getUserById = async (id) => {
     throw err.response?.data;
   }
 };
+
+export const store = {
+  name: "Store Hub",
+  address: "Main Market ********",
+  openingHours: "10AM - 10PM",
+  phone: "+923234567891",
+  about: "We sell *****************",
+  links: [
+    {
+      link: "/customer-services",
+      keyWords: [
+        "customer service",
+        "support",
+        "help",
+        "help center",
+        "contact support",
+        "issue",
+        "problem",
+        "complaint",
+        "refund",
+        "return",
+        "order help",
+      ],
+    },
+    {
+      link: "/about-us",
+      keyWords: ["about us", "our contacts"],
+    },
+  ],
+};
+
+export const theme = {
+  "--backGround": "var(--background)",
+  "--botBg": "var(--border)",
+  "--botTc": "var(--card-foreground)",
+  "--userBg": "var(--primary)",
+  "--userTc": "#ffffff",
+  "--btnBg": "var(--primary)",
+  "--btnTc": "#ffffff",
+  "--headBg": "var(--primary-hover)",
+  "--headTc": "#ffffff",
+};
