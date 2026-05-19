@@ -243,8 +243,8 @@ export const store = {
     {
       link: "/about",
       keyWords: [
-        "About",
         "About Us",
+        "About",
         "Our Story",
         "Who We Are",
         "Healthcare Company",
@@ -261,8 +261,8 @@ export const store = {
     {
       link: "/contact",
       keyWords: [
-        "Contact",
         "Contact Us",
+        "Contact",
         "Get in Touch",
         "Support",
         "Help Center",
@@ -315,8 +315,8 @@ export const store = {
     {
       link: "/terms",
       keyWords: [
-        "Terms",
         "Terms of Service",
+        "Terms",
         "Terms and Conditions",
         "User Agreement",
         "Legal Terms",
