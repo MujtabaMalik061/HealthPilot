@@ -181,7 +181,7 @@ export const store = {
   links: [
     {
       link: "/landing-services",
-      keywords: [
+      keyWords: [
         "Our Services",
         "Services",
         "Medical Services",
