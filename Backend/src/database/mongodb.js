@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
-import { DB_URI, NODE_ENV } from "../config/env.js";
+import { DB_URI } from "../config/env.js";
 
-if (!DB_URI) {
-  throw new Error(
-    `Please define the DB_URI environment variable inside .env.${NODE_ENV}.local`,
-  );
-}
+let connectionPromise;
 
 const connectToDB = async () => {
-  try {
-    await mongoose.connect(DB_URI);
-    console.log(`Connected to DB successfully in ${NODE_ENV} mode`);
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    process.exit(1);
+  if (mongoose.connection.readyState === 1) return mongoose;
+  if (!DB_URI) throw new Error("Please define the DB_URI environment variable");
+
+  if (!connectionPromise) {
+    connectionPromise = mongoose.connect(DB_URI, {
+      serverSelectionTimeoutMS: 10000,
+    }).catch((error) => {
+      connectionPromise = undefined;
+      throw error;
+    });
   }
+
+  return connectionPromise;
 };
 
 export default connectToDB;

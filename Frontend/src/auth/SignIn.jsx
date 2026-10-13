@@ -152,7 +152,6 @@ const SignIn = () => {
         </div>
       </div>
       {isForget && <ForgetPasswordParent onClose={() => setIsForget(false)} />}
-      {/* {isForget && <ResetPasswordModel onClose={() => setIsForget(false)} />} */}
     </div>
   );
 };
