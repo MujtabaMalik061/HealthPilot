@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import "../assets/style/LandingPage.css";
@@ -8,21 +8,23 @@ import { IMAGES } from "../utils/constants";
 
 const LandingLayout = () => {
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="landing-page-container">
+      <a className="hp-skip-link" href="#main-content">Skip to content</a>
       <header className="landing-page-header">
         <div className="landing-page-header-inner">
-          <div className="landing-page-logo">
+          <Link to="/" className="landing-page-logo" aria-label="HealthPilot home">
             <div className="landing-page-logo-icon icon">
               <img src={IMAGES.SiteLogo} alt="" />
             </div>
             <span className="landing-page-logo-text">HealthPilot</span>
-          </div>
+          </Link>
 
-          <nav className="landing-page-nav">
+          <nav id="public-navigation" aria-label="Main navigation" className={`landing-page-nav ${menuOpen ? "hp-nav-open" : ""}`} onClick={() => setMenuOpen(false)}>
             <Link
               to="/"
               style={{
@@ -68,7 +70,9 @@ const LandingLayout = () => {
           </nav>
 
           <div className="landing-page-header-actions">
+            <button className="hp-menu-toggle" aria-label={menuOpen ? "Close navigation" : "Open navigation"} aria-expanded={menuOpen} aria-controls="public-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
             <button
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
               onClick={toggleTheme}
               className="landing-page-icon-btn icon"
             >
@@ -93,7 +97,7 @@ const LandingLayout = () => {
           </div>
         </div>
       </header>
-      <Outlet />
+      <div id={location.pathname === "/" ? undefined : "main-content"}><Outlet /></div>
       <footer className="landing-page-footer">
         <div className="landing-page-footer-inner">
           <div className="landing-page-footer-column">

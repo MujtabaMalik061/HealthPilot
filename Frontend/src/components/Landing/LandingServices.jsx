@@ -11,6 +11,7 @@ const LandingServicesSection = () => {
   const [loadMoreLoading, setLoadMoreLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     getServices();
@@ -18,6 +19,7 @@ const LandingServicesSection = () => {
 
   const getServices = async (nextPage = 1) => {
     try {
+      setError(false);
       if (nextPage === 1) setLoading(true);
       else setLoadMoreLoading(true);
 
@@ -32,6 +34,7 @@ const LandingServicesSection = () => {
       setTotal(res.total);
       setPage(nextPage);
     } catch (err) {
+      setError(true);
       console.error("Failed to get Services:", err);
     } finally {
       setLoading(false);
@@ -58,7 +61,7 @@ const LandingServicesSection = () => {
       ) : services?.length > 0 ? (
         <div className="landing-page-services-grid">
           {services.map((service) => {
-            const Icon = LucideIcons[service.icon];
+            const Icon = LucideIcons[service.icon] || LucideIcons.Stethoscope;
 
             return (
               <ServiceCard
@@ -66,15 +69,16 @@ const LandingServicesSection = () => {
                 Icon={Icon}
                 title={service.title}
                 description={service.description}
-                doctors={service.doctors.length || 0}
+                doctors={service.doctors?.length || 0}
                 viewDetails={false}
               />
             );
           })}
         </div>
       ) : (
-        <p className="empty-data">No services available.</p>
+        error ? <div className="hp-error-state" role="alert"><LucideIcons.WifiOff size={30} /><h3>We couldn’t load services</h3><p>Please try again in a moment.</p><button className="landing-page-btn landing-page-btn-primary" onClick={() => getServices()}>Try again</button></div> : <p className="empty-data">No services available yet. Please check back soon.</p>
       )}
+      {error && services.length > 0 && <div className="hp-error-state" role="alert"><p>We couldn’t load more services.</p><button className="landing-page-btn landing-page-btn-outline" onClick={() => getServices(page + 1)}>Try again</button></div>}
       <LoadMore
         loading={loadMoreLoading}
         disabled={loadMoreLoading || loading}
