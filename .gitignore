@@ -1,0 +1,110 @@
+# ============================================================
+# Dependencies
+# ============================================================
+node_modules/
+.pnp
+.pnp.js
+
+# ============================================================
+# Lock files (use only one package manager per project)
+# ============================================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================================
+# Environment variables & secrets  <-- NEVER commit these
+# ============================================================
+.env
+.env.*
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env.staging
+.env.staging.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.cert
+*.crt
+secrets/
+src/secrets/
+
+# ============================================================
+# Build output
+# ============================================================
+dist/
+build/
+.tmp/
+temp/
+.cache/
+out/
+
+# ============================================================
+# Logs
+# ============================================================
+logs/
+*.log
+*.log.*
+log/
+debug.log
+error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================================
+# Runtime / process
+# ============================================================
+pids
+*.pid
+*.seed
+*.pid.lock
+.pm2/
+
+# ============================================================
+# Test coverage
+# ============================================================
+coverage/
+.nyc_output/
+
+# ============================================================
+# OS files
+# ============================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# ============================================================
+# Editor settings
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ============================================================
+# Claude Code
+# ============================================================
+.claude/
+
+# ============================================================
+# Uploads (user-generated content — not for version control)
+# ============================================================
+Backend/uploads/*
+!Backend/uploads/.gitkeep
